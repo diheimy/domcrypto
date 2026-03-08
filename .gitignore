@@ -35,3 +35,6 @@ coverage/
 
 # Build outputs
 *.tsbuildinfo
+
+# External skills (keep cloned repos)
+!.claude/skills/external/

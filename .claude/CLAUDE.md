@@ -27,6 +27,11 @@ Bot fullstack de arbitragem de criptomoedas (Spot/Futuros)
 ## Agentes disponíveis
 Ver: docs/agents-config.md
 
+## Skills externas instaladas
+- **get-shit-done** - Framework de produtividade e gestão de tasks (.claude/skills/external/get-shit-done)
+- **ui-ux-pro-max-skill** - Skills de UI/UX design (.claude/skills/external/ui-ux-pro-max-skill)
+- **awesome-claude-code** - Recursos e templates para Claude Code (.claude/skills/external/awesome-claude-code)
+
 ## Contexto de negócio
 - Bot de arbitragem de criptomoedas operando em Spot e Futuros
 - Integração com exchanges: Binance, Bybit

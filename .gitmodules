@@ -1,0 +1,9 @@
+[submodule ".claude/skills/external/get-shit-done"]
+	path = .claude/skills/external/get-shit-done
+	url = https://github.com/gsd-build/get-shit-done.git
+[submodule ".claude/skills/external/ui-ux-pro-max-skill"]
+	path = .claude/skills/external/ui-ux-pro-max-skill
+	url = https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git
+[submodule ".claude/skills/external/awesome-claude-code"]
+	path = .claude/skills/external/awesome-claude-code
+	url = https://github.com/hesreallyhim/awesome-claude-code.git

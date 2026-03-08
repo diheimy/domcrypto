@@ -4,7 +4,10 @@
       "Bash(git init:*)",
       "Bash(git checkout:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cd:*)",
+      "Bash(git:*)"
     ]
   }
 }
