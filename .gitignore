@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+!vscode/settings.json
+
+# Test
+coverage/
+.nyc_output/
+
+# Build outputs
+*.tsbuildinfo
