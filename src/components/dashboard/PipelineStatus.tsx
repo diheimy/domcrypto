@@ -51,8 +51,8 @@ export function PipelineStatus({
   return (
     <div className="glass rounded-xl p-4 border border-border">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-          <Activity size={20} className="text-gold" />
+        <h3 className="text-lg font-semibold font-display text-white flex items-center gap-2">
+          <Activity size={20} className="text-primary" />
           Status do Pipeline
         </h3>
         {getStatusIcon()}
@@ -61,9 +61,9 @@ export function PipelineStatus({
       <div className="space-y-3">
         {/* Status */}
         <div className="flex items-center justify-between">
-          <span className="text-muted text-sm">Status</span>
+          <span className="text-muted text-sm font-body">Status</span>
           <span className={cn(
-            'text-sm font-medium',
+            'text-sm font-medium font-body',
             isRunning ? 'text-green' : 'text-yellow-500'
           )}>
             {getStatusText()}
@@ -72,15 +72,15 @@ export function PipelineStatus({
 
         {/* Cycle */}
         <div className="flex items-center justify-between">
-          <span className="text-muted text-sm">Cycle ID</span>
+          <span className="text-muted text-sm font-body">Cycle ID</span>
           <span className="text-white font-mono">#{cycleId}</span>
         </div>
 
         {/* Latency */}
         <div className="flex items-center justify-between">
-          <span className="text-muted text-sm">Latência</span>
+          <span className="text-muted text-sm font-body">Latência</span>
           <span className={cn(
-            'text-white font-mono',
+            'text-white font-data',
             latencyMs > 500 ? 'text-yellow-500' : 'text-green'
           )}>
             {latencyMs}ms
@@ -89,8 +89,8 @@ export function PipelineStatus({
 
         {/* Last Update */}
         <div className="flex items-center justify-between">
-          <span className="text-muted text-sm">Última Atualização</span>
-          <span className="text-muted text-sm font-mono">
+          <span className="text-muted text-sm font-body">Última Atualização</span>
+          <span className="text-muted text-sm font-data">
             {formatLastUpdate(lastUpdate)}
           </span>
         </div>
@@ -98,10 +98,10 @@ export function PipelineStatus({
         {/* Connection indicator */}
         <div className="flex items-center gap-2 pt-3 border-t border-border">
           <div className={cn(
-            'w-2 h-2 rounded-full animate-pulse',
+            'w-2 h-2 rounded-full animate-pulse-live',
             getStatusColor()
           )} />
-          <span className="text-xs text-muted">
+          <span className="text-xs text-muted font-body">
             {isRunning ? 'Conectado ao backend' : 'Desconectado'}
           </span>
         </div>

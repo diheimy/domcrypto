@@ -38,3 +38,11 @@ coverage/
 
 # External skills (keep cloned repos)
 !.claude/skills/external/
+
+# Claude Code local settings
+.claude/settings.local.json
+.claude/get-shit-done/
+.claude/agents/
+.claude/commands/
+.claude/gsd-file-manifest.json
+.claude/package.json

@@ -44,7 +44,8 @@ export function useOpportunities(): UseOpportunitiesReturn {
   }, [])
 
   useEffect(() => {
-    if (isPaused) return
+    // Only run on client side
+    if (typeof window === 'undefined' || isPaused) return
 
     const eventSource = new EventSource('/api/sse/opportunities')
 

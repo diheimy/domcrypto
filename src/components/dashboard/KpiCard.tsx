@@ -38,19 +38,19 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'glass rounded-xl p-6 border border-border transition-all hover:border-gold/30',
+        'glass rounded-xl p-6 border border-border transition-all hover:border-primary/30 hover:shadow-glow',
         className
       )}
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="text-muted text-sm">{title}</span>
-        <div className="text-gold">{icon}</div>
+        <span className="text-muted text-sm font-body">{title}</span>
+        <div className="text-primary">{icon}</div>
       </div>
-      <div className="text-3xl font-bold font-mono text-white">
+      <div className="text-3xl font-bold font-data text-white">
         {value}
       </div>
       {change && (
-        <div className={cn('text-sm mt-2 flex items-center gap-1', trendColors[trend])}>
+        <div className={cn('text-sm mt-2 flex items-center gap-1 font-body', trendColors[trend])}>
           <span>{trendIcons[trend]}</span>
           <span>{change}</span>
         </div>

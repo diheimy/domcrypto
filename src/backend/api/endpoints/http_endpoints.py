@@ -257,7 +257,6 @@ async def get_pipeline_snapshots(
 # ERROR HANDLERS
 # =============================================================================
 
-@router.exception_handler(Exception)
 async def generic_exception_handler(request, exc: Exception):
     """Generic exception handler."""
     logger.error(f"Unhandled exception: {exc}")

@@ -65,6 +65,7 @@ services:
     environment:
       DATABASE_URL: postgresql://domcrypto:${POSTGRES_PASSWORD:-password}@postgres:5432/domcrypto
       PYTHON_WS_URL: ws://python-backend:8000/ws/opportunities
+      BACKEND_API_URL: http://python-backend:8000
       NODE_ENV: production
     depends_on:
       - postgres
@@ -72,7 +73,7 @@ services:
     networks:
       - domcrypto_net
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
 networks:
   domcrypto_net:

@@ -26,7 +26,7 @@ export function ScoreBadge({ score, size = 'md', showQuality = false }: ScoreBad
     <div className="inline-flex flex-col items-center">
       <span
         className={cn(
-          'font-mono font-bold rounded transition-colors',
+          'font-data font-bold rounded transition-colors',
           bgClass,
           colorClass,
           sizes[size]
@@ -35,7 +35,7 @@ export function ScoreBadge({ score, size = 'md', showQuality = false }: ScoreBad
         {score}
       </span>
       {showQuality && (
-        <span className="text-xs text-muted mt-0.5">{quality}</span>
+        <span className="text-xs text-muted mt-0.5 font-body">{quality}</span>
       )}
     </div>
   )

@@ -134,10 +134,52 @@ _app_state: Dict[str, Any] = {
     "snapshots": [],
 }
 
-
 # =============================================================================
 # API V1 ENDPOINTS
 # =============================================================================
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global pipeline, risk_state, execution_engine
+    logger.info("🚀 INICIANDO SERVIDOR DOMARB V2 (INSTITUCIONAL)...")
+
+    # 1. Inicializa Estados
+    risk_state = PortfolioRiskState(total_capital=1000.0)
+
+    # 2. Inicializa Engine (Com os argumentos obrigatórios F7)
+    execution_engine = ExecutionEngine(router_map={}, portfolio_state=risk_state)
+
+    # 3. Inicializa Pipeline Completo (F1-F17)
+    logger.info("🛡️ Inicializando Governança de Risco e Motor de Execução...")
+    pipeline = OpportunityPipeline(risk_state, execution_engine)
+    logger.info("✅ Pipeline Global injetado.")
+
+    # 4. Inicia Scanner Loop
+    scan_task = asyncio.create_task(scanner_loop())
+
+    yield
+
+    # Shutdown
+    logger.info("🛑 Desligando servidor...")
+    scan_task.cancel()
+    with suppress(asyncio.CancelledError):
+        await scan_task
+    if pipeline:
+        await pipeline.fetch_service.close_all()
+
+# =============================================================================
+# FASTAPI APP
+# =============================================================================
+
+app = FastAPI(title="DomCrypto Bot", version="0.2.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/api/v1/opportunities")
 async def list_opportunities(
@@ -247,34 +289,10 @@ async def get_pipeline_snapshots(
     snapshots = _app_state.get("snapshots", [])
     return {"items": snapshots[-limit:], "total": len(snapshots)}
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global pipeline, risk_state, execution_engine
-    logger.info("🚀 INICIANDO SERVIDOR DOMARB V2 (INSTITUCIONAL)...")
-    
-    # 1. Inicializa Estados
-    risk_state = PortfolioRiskState(total_capital=1000.0)
-    
-    # 2. Inicializa Engine (Com os argumentos obrigatórios F7)
-    execution_engine = ExecutionEngine(router_map={}, portfolio_state=risk_state) 
-    
-    # 3. Inicializa Pipeline Completo (F1-F17)
-    logger.info("🛡️ Inicializando Governança de Risco e Motor de Execução...")
-    pipeline = OpportunityPipeline(risk_state, execution_engine)
-    logger.info("✅ Pipeline Global injetado.")
 
-    # 4. Inicia Scanner Loop
-    scan_task = asyncio.create_task(scanner_loop())
-    
-    yield
-    
-    # Shutdown
-    logger.info("🛑 Desligando servidor...")
-    scan_task.cancel()
-    with suppress(asyncio.CancelledError):
-        await scan_task
-    if pipeline:
-        await pipeline.fetch_service.close_all()
+# =============================================================================
+# SCANNER LOOP
+# =============================================================================
 
 async def scanner_loop():
     logger.info("💓 Scanner iniciado (Loop Principal).")
@@ -377,15 +395,10 @@ async def scanner_loop():
         # Intervalo entre ciclos
         await asyncio.sleep(10)
 
-app = FastAPI(title="DomCrypto Bot", version="0.2.0", lifespan=lifespan)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# =============================================================================
+# LIFESPAN & ROUTES
+# =============================================================================
 
 # Mount static e templates (diretórios opcionais)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -398,6 +411,10 @@ if os.path.exists(templates_path):
 
 # Rotas
 app.include_router(routes.router)
+
+# Register global exception handler
+from src.backend.api.endpoints.http_endpoints import generic_exception_handler
+app.add_exception_handler(Exception, generic_exception_handler)
 
 
 @app.get("/health")

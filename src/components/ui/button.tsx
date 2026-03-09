@@ -14,14 +14,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none'
+    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium font-body transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer'
 
     const variants = {
-      primary: 'bg-gold text-black hover:bg-gold/90 focus:ring-gold shadow-lg shadow-gold/20',
-      secondary: 'bg-transparent border border-gold text-gold hover:bg-gold/10 focus:ring-gold',
+      primary: 'bg-primary text-black hover:bg-primary-light focus:ring-primary shadow-lg shadow-primary/20',
+      secondary: 'bg-transparent border border-primary text-primary hover:bg-primary/10 focus:ring-primary',
       ghost: 'bg-transparent hover:bg-hover text-muted hover:text-white focus:ring-muted',
       danger: 'bg-red/20 text-red hover:bg-red/30 focus:ring-red',
-      outline: 'bg-transparent border border-border text-white hover:border-gold focus:ring-gold'
+      outline: 'bg-transparent border border-border text-white hover:border-primary focus:ring-primary'
     }
 
     const sizes = {

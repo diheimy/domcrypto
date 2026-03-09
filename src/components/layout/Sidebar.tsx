@@ -52,7 +52,8 @@ export default function Sidebar() {
       {/* Mobile menu button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-card border border-border hover:border-gold transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-surface border border-border hover:border-primary transition-colors"
+        aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -73,12 +74,12 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <div className="p-6 border-b border-border">
-          <h1 className="text-2xl font-bold text-gradient-gold">DomCrypto</h1>
+          <h1 className="text-2xl font-bold font-display text-gradient-gold">DomCrypto</h1>
           <p className="text-xs text-muted mt-1">Arbitragem Bot v0.2</p>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1" role="navigation" aria-label="Menu principal">
           {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
@@ -86,14 +87,14 @@ export default function Sidebar() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-gold-glow border-l-[3px] border-gold text-gold'
+                    ? 'bg-gold-glow border-l-[3px] border-primary text-primary'
                     : 'hover:bg-hover border-l-[3px] border-transparent text-muted hover:text-white'
                 }`}
               >
                 {item.icon}
-                <span className="font-medium">{item.name}</span>
+                <span className="font-medium font-body">{item.name}</span>
               </Link>
             )
           })}
@@ -101,12 +102,12 @@ export default function Sidebar() {
 
         {/* System Status */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm" role="status" aria-live="polite">
             <div className={`w-2 h-2 rounded-full ${
-              systemStatus === 'online' ? 'bg-green animate-pulse' : 'bg-red'
+              systemStatus === 'online' ? 'bg-green animate-pulse-live' : 'bg-red'
             }`} />
             <span className={systemStatus === 'online' ? 'text-green' : 'text-red'}>
-              {systemStatus === 'online' ? '● Online' : '● Offline'}
+              {systemStatus === 'online' ? 'Online' : 'Offline'}
             </span>
           </div>
         </div>
