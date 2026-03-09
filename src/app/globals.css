@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* Geist Sans font - usar CDN ou local */
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #000000;
+  --surface: #060607;
+  --card: #0f1319;
+  --hover: #151a23;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-gold: rgba(252, 213, 53, 0.25);
+  --gold: #FCD535;
+  --gold-dim: #f0b90b;
+  --gold-glow: rgba(252, 213, 53, 0.15);
+  --green: #0ecb81;
+  --red: #f6465d;
+  --blue: #3b82f6;
+  --muted: #848e9c;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Geist Sans', system-ui, -apple-system, sans-serif;
+  background: var(--background);
+  color: #ffffff;
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Utility classes */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-glow-gold {
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(15, 19, 25, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+/* Animations */
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(252, 213, 53, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(252, 213, 53, 0.25);
+  }
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(252, 213, 53, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}

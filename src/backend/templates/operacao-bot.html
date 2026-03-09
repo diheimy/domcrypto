@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoArb - DOM BOT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-body: #0b0e11; 
+            --bg-card: #1e2329; 
+            --border-color: #2b3139; 
+            --primary: #FCD535; 
+            --text-main: #eaecef; 
+            --text-sub: #848e9c; 
+            --green: #0ecb81; 
+            --red: #f6465d; 
+            --blue: #3b82f6; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+        }
+
+        .container { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* HEADER PADRÃO CALCULADORA */
+        .top-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--bg-card); 
+            padding: 15px 25px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .nav-brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .nav-brand i { color: var(--primary); }
+
+        .status-badge {
+            background: #161a1e;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--red);
+            border-radius: 50%;
+            box-shadow: 0 0 5px var(--red);
+        }
+        .bot-active .pulse-dot {
+            background-color: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .actions { display: flex; gap: 10px; }
+        .btn-ghost { 
+            background: transparent; 
+            border: 1px solid var(--border-color); 
+            color: var(--text-sub); 
+            padding: 8px 15px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        /* METRICAS (CARDS) */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .metric-card h4 { font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric-value { font-size: 24px; font-weight: 800; color: white; margin: 5px 0; }
+        .metric-sub { font-size: 12px; font-weight: 600; }
+
+        /* PAINÉIS DE CONTROLE */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .panel-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .btn-primary-bot {
+            width: 100%;
+            padding: 12px;
+            background: var(--green);
+            color: black;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.2s;
+        }
+        .btn-primary-bot:hover { filter: brightness(1.1); }
+
+        /* INPUTS ESTILO CALCULADORA */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; }
+        .input-group input { 
+            width: 100%; 
+            background: var(--bg-body); 
+            border: 1px solid var(--border-color); 
+            padding: 10px; 
+            color: white; 
+            border-radius: 4px; 
+            font-size: 14px; 
+        }
+        .input-group input:focus { outline: none; border-color: var(--primary); }
+
+        /* TOGGLES */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .toggle-row span { font-size: 13px; color: var(--text-main); }
+
+        /* STATUS LIST */
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .stat-label { color: var(--text-sub); }
+        .stat-val { font-weight: 700; }
+
+        .val-green { color: var(--green); }
+        .val-red { color: var(--red); }
+
+        @media (max-width: 1000px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header class="top-nav">
+        <div class="nav-brand">
+            <i class="fa-solid fa-robot"></i>
+            <div>
+                <span style="display:block">DOM BOT <span style="color:var(--primary); font-size: 12px;">PRO</span></span>
+                <small style="font-size: 10px; color: var(--text-sub); font-weight: 400;">Market Making Automated System</small>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="status-badge" id="botStatus">
+                <span class="pulse-dot"></span> 
+                <span id="statusText">OFFLINE</span>
+            </div>
+            <button class="btn-ghost">API KEY</button>
+            <button class="btn-ghost">LOGS</button>
+        </div>
+    </header>
+
+    <section class="metrics-grid">
+        <div class="metric-card">
+            <h4>Lucro Hoje</h4>
+            <span class="metric-value">$0.00</span>
+            <span class="metric-sub val-green"><i class="fa-solid fa-caret-up"></i> +12.5%</span>
+        </div>
+
+        <div class="metric-card">
+            <h4>Taxa de Sucesso</h4>
+            <span class="metric-value">0.0%</span>
+            <span class="metric-sub" style="color:var(--text-sub)">0 de 0 trades</span>
+        </div>
+
+        <div class="metric-card">
+            <h4>Ordens Ativas</h4>
+            <span class="metric-value">0</span>
+            <span class="metric-sub" style="color:var(--blue)">Sincronizado</span>
+        </div>
+
+        <div class="metric-card">
+            <h4>Lucro Acumulado</h4>
+            <span class="metric-value">$0.00</span>
+            <span class="metric-sub" style="color:var(--text-sub)">Desde 01/12</span>
+        </div>
+    </section>
+
+    <main class="main-grid">
+        
+        <div class="panel-card">
+            <h3><i class="fa-solid fa-gears" style="color:var(--primary)"></i> Painel de Controle</h3>
+            <button class="btn-primary-bot" id="btnToggleBot" onclick="toggleBot()">
+                <i class="fa-solid fa-play"></i> INICIAR ROBÔ
+            </button>
+
+            <div class="toggle-row">
+                <span>Negociação Automática</span>
+                <input type="checkbox">
+            </div>
+
+            <div class="toggle-row">
+                <span>Notificações Desktop</span>
+                <input type="checkbox" checked>
+            </div>
+
+            <div class="toggle-row" style="border:none">
+                <span>Trailing Stop Interno</span>
+                <input type="checkbox">
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <h3><i class="fa-solid fa-wrench" style="color:var(--blue)"></i> Configurações</h3>
+
+            <div class="input-group">
+                <label>Lucro Mínimo Alvo (%)</label>
+                <input type="number" value="0.50" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label>Exposição Máxima (USDT)</label>
+                <input type="number" value="1000">
+            </div>
+
+            <div class="input-group">
+                <label>Spread de Segurança (%)</label>
+                <input type="number" value="0.10" step="0.01">
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <h3><i class="fa-solid fa-chart-line" style="color:var(--green)"></i> Performance Live</h3>
+
+            <div class="stat-item">
+                <span class="stat-label">Total de Execuções</span>
+                <span class="stat-val">0</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-label">Trades Positivos</span>
+                <span class="stat-val val-green">0</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-label">Lucro Médio por Trade</span>
+                <span class="stat-val">$0.00</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-label">Drawdown Máximo</span>
+                <span class="stat-val val-red">0.00%</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-label">Tempo de Atividade</span>
+                <span class="stat-val">00:00:00</span>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let botRunning = false;
+
+    function toggleBot() {
+        botRunning = !botRunning;
+        const btn = document.getElementById('btnToggleBot');
+        const badge = document.getElementById('botStatus');
+        const statusText = document.getElementById('statusText');
+
+        if(botRunning) {
+            btn.innerHTML = '<i class="fa-solid fa-stop"></i> PARAR ROBÔ';
+            btn.style.background = 'var(--red)';
+            btn.style.color = 'white';
+            badge.classList.add('bot-active');
+            statusText.innerText = 'ONLINE';
+            statusText.style.color = 'var(--green)';
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-play"></i> INICIAR ROBÔ';
+            btn.style.background = 'var(--green)';
+            btn.style.color = 'black';
+            badge.classList.remove('bot-active');
+            statusText.innerText = 'OFFLINE';
+            statusText.style.color = 'var(--text-sub)';
+        }
+    }
+</script>
+
+</body>
+</html>

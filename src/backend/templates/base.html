@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dom Arb - {% block title %}Pro{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-dark: #0a0d12; 
+            --bg-sidebar: #0f1319; 
+            --bg-card: #151a23; 
+            --bg-card-hover: #1a2029;
+            --header-bg: #004aad; 
+            --text-primary: #eaecef; 
+            --text-secondary: #848e9c; 
+            --border-color: #1e2632; 
+            --border-glow: rgba(252, 213, 53, 0.15);
+            --primary-color: #FCD535; 
+            --primary-glow: rgba(252, 213, 53, 0.25);
+            --green: #0ecb81; 
+            --green-glow: rgba(14, 203, 129, 0.2);
+            --red: #f6465d; 
+            --red-glow: rgba(246, 70, 93, 0.2);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.2);
+            --gradient-gold: linear-gradient(135deg, #FCD535 0%, #f0b90b 50%, #e6a800 100%);
+            --gradient-dark: linear-gradient(180deg, #0f1319 0%, #0a0d12 100%);
+            --gradient-card: linear-gradient(145deg, rgba(30, 38, 50, 0.6) 0%, rgba(15, 19, 25, 0.8) 100%);
+            --glass-bg: rgba(21, 26, 35, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --shadow-glow: 0 0 30px rgba(252, 213, 53, 0.1);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: var(--gradient-dark);
+            background-attachment: fixed;
+            color: var(--text-primary); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+        
+        /* === MODERN BACKGROUND PATTERN === */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(252, 213, 53, 0.08), transparent),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.05), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* LAYOUT GERAL */
+        .sidebar {
+            width: 260px;
+            background: #000000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, var(--primary-color), transparent);
+            opacity: 0.3;
+        }
+        
+        /* --- AQUI ESTÁ A CORREÇÃO: Classe para o Header da Sidebar com a LINHA --- */
+        .sidebar-header {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color); /* <--- A LINHA DE DIVISÃO */
+            background: #000000;
+            position: relative;
+        }
+        
+        .sidebar-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            opacity: 0.5;
+        }
+
+        .brand { 
+            padding: 20px; 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: var(--text-primary); 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .brand span { color: var(--primary-color); }
+        
+        .menu {
+            flex: 1;
+            padding: 24px 0;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+            background: #000000;
+        }
+        
+        .menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .menu::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        
+        .menu::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+        
+        .menu-label { 
+            padding: 20px 24px 8px; 
+            font-size: 10px; 
+            font-weight: 700; 
+            color: var(--text-secondary); 
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        
+        .menu-item { 
+            padding: 14px 24px; 
+            display: flex; 
+            align-items: center; 
+            color: var(--text-secondary); 
+            text-decoration: none; 
+            font-size: 14px; 
+            font-weight: 500; 
+            border-left: 3px solid transparent; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            margin: 2px 12px;
+            border-radius: 8px;
+            border-left: none;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--gradient-gold);
+            border-radius: 0 2px 2px 0;
+            transition: height 0.3s ease;
+        }
+        
+        .menu-item:hover, .menu-item.active { 
+            background: rgba(252, 213, 53, 0.08);
+            color: var(--primary-color); 
+            box-shadow: 0 0 20px rgba(252, 213, 53, 0.1);
+        }
+        
+        .menu-item:hover::before, .menu-item.active::before {
+            height: 60%;
+        }
+        
+        .menu-item i { 
+            width: 24px; 
+            text-align: center; 
+            margin-right: 12px;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-item:hover i {
+            transform: scale(1.1);
+        }
+        
+        .submenu { 
+            padding-left: 50px; 
+            display: none;
+            margin: 4px 12px;
+        }
+        .submenu.open { display: block; }
+        .submenu a { 
+            display: block; 
+            padding: 10px 16px; 
+            color: var(--text-secondary); 
+            font-size: 13px; 
+            text-decoration: none; 
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 2px 0;
+        }
+        .submenu a:hover { 
+            color: var(--primary-color);
+            background: rgba(252, 213, 53, 0.05);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+            background: #000000;
+        }
+        
+        /* HEADER PADRÃO */
+        .header {
+            height: 72px;
+            background: #060607;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+        
+        .header-title { 
+            color: var(--primary-color); 
+            font-size: 20px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(252, 213, 53, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--gradient-gold);
+            border-radius: 2px;
+        }
+        
+        .header-right { display: flex; align-items: center; gap: 24px; }
+        
+        .user-profile { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        
+        .user-profile:hover {
+            background: rgba(252, 213, 53, 0.08);
+            border-color: rgba(252, 213, 53, 0.2);
+        }
+        
+        .user-avatar { 
+            width: 36px; 
+            height: 36px; 
+            background: var(--gradient-gold);
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #000; 
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(252, 213, 53, 0.3);
+        }
+        
+        .user-name { 
+            font-size: 14px; 
+            color: var(--text-primary); 
+            font-weight: 600;
+        }
+
+        /* UTILITÁRIOS GERAIS */
+        .scroll-area { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 28px 32px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+        
+        .scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        .text-green { color: var(--green); text-shadow: 0 0 20px var(--green-glow); } 
+        .text-red { color: var(--red); text-shadow: 0 0 20px var(--red-glow); }
+        
+        .stats-grid { display: flex; gap: 20px; margin-bottom: 25px; }
+        .stat-val { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .stat-val2 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        
+        /* === MODERN ANIMATIONS === */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* === MODERN CARD STYLES === */
+        .modern-card {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+        
+        .modern-card:hover {
+            border-color: rgba(252, 213, 53, 0.2);
+            box-shadow: var(--shadow-card), 0 0 30px rgba(252, 213, 53, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        {% block extra_css %}{% endblock %}
+    </style>
+    {% block head_scripts %}{% endblock %}
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header" align-items: center; padding: 200px 50px;>
+            <img src="/static/img/logo.png" alt="DomArb Logo" style="height: 200px; width: auto; border: none;"> 
+        </div>
+
+        <nav class="menu">
+            <a href="/" class="menu-item {% if page == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-chart-pie"></i> Dashboard
+            </a>
+            
+            <div class="menu-label">OPERACIONAL</div>
+            
+            <div class="menu-item {% if page == 'spot-futuros' %}active{% endif %}" onclick="document.getElementById('sub-arb').classList.toggle('open')">
+                <i class="fa-solid fa-layer-group"></i> Arbitragem 
+                <i class="fa-solid fa-chevron-down" style="margin-left:auto; width:auto; font-size:10px;"></i>
+            </div>
+            <div class="submenu {% if page == 'spot-futuros' %}open{% endif %}" id="sub-arb">
+                <a href="/spot-futuros" style="{% if page == 'spot-futuros' %}color:#FCD535; font-weight:bold{% endif %}">• Spot x Futuros</a>
+            </div>
+
+            <div class="menu-item {% if page == 'market-making' %}active{% endif %}" onclick="document.getElementById('sub-bots').classList.toggle('open')">
+                <i class="fa-solid fa-robot"></i> Dom Bot 
+                <i class="fa-solid fa-chevron-down" style="margin-left:auto; width:auto; font-size:10px;"></i>
+            </div>
+            <div class="submenu {% if page == 'market-making' %}open{% endif %}" id="sub-bots">
+                <a href="/market-making" style="{% if page == 'market-making' %}color:#FCD535; font-weight:bold{% endif %}">• Market Making</a>
+            </div>
+
+            <div class="menu-label">FERRAMENTAS</div>
+            
+            <a href="/calculator.html" target="_blank" class="menu-item {% if page == 'operacoes' %}active{% endif %}">
+                <i class="fa-solid fa-briefcase"></i> Operações
+            </a>
+
+            <div class="menu-item" onclick="alert('Funcionalidade de notas global em breve!')">
+                <i class="fa-regular fa-note-sticky"></i> Notas
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="header-title">{% block header_title %}DomArb Bot{% endblock %}</div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar">A</div>
+                    <div class="user-name">Admin User</div>
+                    <i class="fa-solid fa-caret-down" style="color:#FCD535; font-weight:bold; font-size:10px;"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="scroll-area">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

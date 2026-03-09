@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% set page = 'dashboard' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+
+{% block head_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block extra_css %}
+/* CSS Específico do Dashboard - MODERNIZADO */
+.kpi-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 24px; 
+    margin-bottom: 32px; 
+}
+
+.kpi-card { 
+    background: var(--gradient-card);
+    backdrop-filter: blur(10px);
+    padding: 24px; 
+    border-radius: 16px; 
+    border: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-gold);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(252, 213, 53, 0.2);
+    box-shadow: var(--shadow-card), 0 8px 40px rgba(252, 213, 53, 0.15);
+}
+
+.kpi-card:hover::before {
+    opacity: 1;
+}
+
+.kpi-card:nth-child(1)::before { background: linear-gradient(90deg, #0ecb81, #10b981); }
+.kpi-card:nth-child(2)::before { background: var(--gradient-gold); }
+.kpi-card:nth-child(3)::before { background: linear-gradient(90deg, #0ecb81, #22c55e); }
+.kpi-card:nth-child(4)::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+
+.kpi-title { 
+    font-size: 11px; 
+    color: var(--text-secondary); 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.kpi-value { 
+    font-size: 32px; 
+    font-weight: 800; 
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.2;
+}
+
+.kpi-sub { 
+    font-size: 12px; 
+    margin-top: 8px;
+    color: var(--text-secondary);
+}
+
+.charts-row { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr; 
+    gap: 24px; 
+    margin-bottom: 32px; 
+}
+
+.chart-box { 
+    background: var(--gradient-card);
+    backdrop-filter: blur(10px);
+    padding: 24px; 
+    border-radius: 16px; 
+    border: 1px solid var(--glass-border); 
+    height: 380px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+}
+
+.chart-box:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.chart-title { 
+    font-size: 16px; 
+    font-weight: 700; 
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-title::before {
+    content: '';
+    width: 3px;
+    height: 16px;
+    background: var(--gradient-gold);
+    border-radius: 2px;
+}
+
+.recent-table { 
+    background: var(--gradient-card);
+    backdrop-filter: blur(10px);
+    border-radius: 16px; 
+    border: 1px solid var(--glass-border); 
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td { 
+    padding: 16px 20px; 
+    text-align: left; 
+    border-bottom: 1px solid var(--border-color); 
+    font-size: 14px; 
+}
+
+th { 
+    background: rgba(0,0,0,0.3); 
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+td {
+    transition: background 0.2s ease;
+}
+
+tr:hover td {
+    background: rgba(252, 213, 53, 0.03);
+}
+
+/* Dashboard Section Title */
+h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+h3::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: var(--gradient-gold);
+    border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-title">Lucro Total (Realizado)</div>
+        <div class="kpi-value text-green" id="totalPnL">$0.00</div>
+        <div class="kpi-sub">Baseado no histórico</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Operações Fechadas</div>
+        <div class="kpi-value" id="totalTrades">0</div>
+        <div class="kpi-sub">Execuções completas</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Melhor Trade</div>
+        <div class="kpi-value text-green" id="bestTrade">$0.00</div>
+        <div class="kpi-sub" id="bestTradePair">-</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-title">Taxa de Acerto</div>
+        <div class="kpi-value" style="color:#3b82f6" id="winRate">0%</div>
+        <div class="kpi-sub">Win / Loss</div>
+    </div>
+</div>
+
+<div class="charts-row">
+    <div class="chart-box">
+        <div class="chart-title">Evolução de Lucro ($)</div>
+        <canvas id="pnlChart"></canvas>
+    </div>
+    <div class="chart-box">
+        <div class="chart-title">Volume por Corretora</div>
+        <canvas id="exChart"></canvas>
+    </div>
+</div>
+
+<h3 style="margin-bottom:15px;">Últimas Operações Fechadas</h3>
+<div class="recent-table">
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Par</th>
+                <th>Corretoras</th>
+                <th>Resultado ($)</th>
+            </tr>
+        </thead>
+        <tbody id="historyBody">
+            <tr><td colspan="4" style="text-align:center; padding:20px;">Carregando dados...</td></tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadDashboard() {
+        try {
+            const res = await fetch('/api/trades/history');
+            const trades = await res.json();
+            
+            let totalPnL = 0; let wins = 0; let maxWin = 0; let bestPair = "-";
+            let chartData = []; let labels = []; let accum = 0; let exCounts = {};
+
+            const sortedTrades = [...trades].sort((a,b) => a.timestamp - b.timestamp);
+
+            sortedTrades.forEach(t => {
+                const val = parseFloat(t.pnl.replace('$',''));
+                totalPnL += val;
+                if(val > 0) wins++;
+                if(val > maxWin) { maxWin = val; bestPair = t.symbol; }
+                accum += val;
+                chartData.push(accum);
+                labels.push(new Date(t.timestamp*1000).toLocaleDateString().slice(0,5));
+                const ex = t.exBuy || "Unknown";
+                exCounts[ex] = (exCounts[ex] || 0) + 1;
+            });
+
+            document.getElementById('totalPnL').innerText = `$${totalPnL.toFixed(2)}`;
+            document.getElementById('totalPnL').className = totalPnL >= 0 ? 'kpi-value text-green' : 'kpi-value text-red';
+            document.getElementById('totalTrades').innerText = trades.length;
+            document.getElementById('bestTrade').innerText = `$${maxWin.toFixed(2)}`;
+            document.getElementById('bestTradePair').innerText = bestPair;
+            
+            const rate = trades.length > 0 ? (wins / trades.length) * 100 : 0;
+            document.getElementById('winRate').innerText = `${rate.toFixed(0)}%`;
+
+            const tbody = document.getElementById('historyBody');
+            if(trades.length === 0) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum histórico encontrado.</td></tr>';
+            else {
+                tbody.innerHTML = trades.slice(0, 5).map(t => `
+                    <tr>
+                        <td>${new Date(t.timestamp*1000).toLocaleString()}</td>
+                        <td style="font-weight:bold; color:#FCD535">${t.symbol}</td>
+                        <td>${t.exBuy} -> ${t.exSell}</td>
+                        <td class="${t.pnl.includes('-')?'text-red':'text-green'}" style="font-weight:bold">${t.pnl}</td>
+                    </tr>
+                `).join('');
+            }
+
+            new Chart(document.getElementById('pnlChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'PnL Acumulado',
+                        data: chartData,
+                        borderColor: '#0ecb81',
+                        backgroundColor: 'rgba(14, 203, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#0ecb81',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(43, 49, 57, 0.5)', drawBorder: false }, ticks: { color: '#848e9c', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(43, 49, 57, 0.5)', drawBorder: false }, ticks: { color: '#848e9c', font: { size: 10 } } }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('exChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(exCounts),
+                    datasets: [{
+                        data: Object.values(exCounts),
+                        backgroundColor: ['#FCD535', '#3b82f6', '#f6465d', '#0ecb81'],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: { 
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                color: '#eaecef',
+                                padding: 16,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 12 }
+                            } 
+                        } 
+                    }
+                }
+            });
+
+        } catch(e) { console.error(e); }
+    }
+    loadDashboard();
+</script>
+{% endblock %}

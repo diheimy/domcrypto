@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # -------------------------------------------
+  # PostgreSQL Database
+  # -------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: domcrypto_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: domcrypto
+      POSTGRES_USER: domcrypto
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - domcrypto_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U domcrypto"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  # -------------------------------------------
+  # Python Backend (FastAPI)
+  # -------------------------------------------
+  python-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: domcrypto_python
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://domcrypto:${POSTGRES_PASSWORD:-password}@postgres:5432/domcrypto
+      PYTHONUNBUFFERED: "1"
+      PYTHON_ENV: production
+      BINANCE_API_KEY: ${BINANCE_API_KEY:-}
+      BINANCE_API_SECRET: ${BINANCE_API_SECRET:-}
+      BYBIT_API_KEY: ${BYBIT_API_KEY:-}
+      BYBIT_API_SECRET: ${BYBIT_API_SECRET:-}
+      PAPER_TRADING: ${PAPER_TRADING:-true}
+      INITIAL_CAPITAL_USD: ${INITIAL_CAPITAL_USD:-10000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - domcrypto_net
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+
+  # -------------------------------------------
+  # Next.js Frontend
+  # -------------------------------------------
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+    container_name: domcrypto_nextjs
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://domcrypto:${POSTGRES_PASSWORD:-password}@postgres:5432/domcrypto
+      PYTHON_WS_URL: ws://python-backend:8000/ws/opportunities
+      NODE_ENV: production
+    depends_on:
+      - postgres
+      - python-backend
+    networks:
+      - domcrypto_net
+    ports:
+      - "3000:3000"
+
+networks:
+  domcrypto_net:
+    driver: bridge
+
+volumes:
+  postgres_data:

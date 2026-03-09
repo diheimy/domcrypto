@@ -1,0 +1,126 @@
+// Prisma Schema for DomCrypto
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// OPORTUNIDADES
+// ============================================
+
+/// Tabela principal: estado atual de cada oportunidade
+model Opportunity {
+  symbol            String   @db.VarChar(20)
+  exchangeSpot      String   @db.VarChar(30)
+  exchangeFutures   String   @db.VarChar(30)
+  payload           Json     // Contrato V2 completo
+  score             Int      @default(0)
+  spreadNetPct      Decimal  @db.Decimal(8, 4) @default(0)
+  volume24hUsd      BigInt   @default(0) @db.BigInt
+  status            String   @default("OBSERVATION_ONLY") @db.VarChar(20)
+  capacityBand      String   @default("RED") @db.VarChar(10)
+  firstSeenAt       DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@id([symbol, exchangeSpot, exchangeFutures])
+  @@index([score])
+  @@index([updatedAt])
+  @@index([status])
+  @@map("opportunities")
+}
+
+// ============================================
+// PIPELINE SNAPSHOTS
+// ============================================
+
+/// Snapshots do pipeline (histórico e análise)
+model PipelineSnapshot {
+  id         BigInt    @id @default(autoincrement())
+  cycleId    Int
+  ts         DateTime  @default(now())
+  countRaw   Int       @default(0)
+  countActive Int      @default(0)
+  countObs   Int       @default(0)
+  countKilled Int      @default(0)
+  topSpread  Decimal?  @db.Decimal(8, 4)
+  topSymbol  String?
+  meta       Json?
+
+  @@index([ts])
+  @@map("pipeline_snapshots")
+}
+
+// ============================================
+// USER SETTINGS
+// ============================================
+
+/// Configurações persistidas por perfil
+model UserSetting {
+  id          Int      @id @default(autoincrement())
+  profileName String   @unique @db.VarChar(50)
+  settings    Json
+  updatedAt   DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+// ============================================
+// PnL RECORDS
+// ============================================
+
+/// Registro de PnL das operações executadas
+model PnlRecord {
+  id             BigInt     @id @default(autoincrement())
+  symbol         String     @db.VarChar(20)
+  exchangeSpot   String     @db.VarChar(30)
+  exchangeFutures String    @db.VarChar(30)
+  entryAt        DateTime
+  exitAt         DateTime?
+  entrySpread    Decimal?   @db.Decimal(8, 4)
+  exitSpread     Decimal?   @db.Decimal(8, 4)
+  capitalUsd     Decimal?   @db.Decimal(12, 2)
+  pnlUsd         Decimal?   @db.Decimal(12, 2)
+  pnlPct         Decimal?   @db.Decimal(8, 4)
+  feesUsd        Decimal?   @db.Decimal(12, 2)
+  status         String     @default("OPEN") @db.VarChar(20)
+  meta           Json?
+
+  @@index([entryAt])
+  @@index([symbol])
+  @@map("pnl_records")
+}
+
+// ============================================
+// PAPER TRADES
+// ============================================
+
+/// Paper trades para backtest e simulação
+model PaperTrade {
+  id             BigInt     @id @default(autoincrement())
+  symbol         String     @db.VarChar(20)
+  exchangeSpot   String     @db.VarChar(30)
+  exchangeFutures String    @db.VarChar(30)
+  entryAt        DateTime   @default(now())
+  exitAt         DateTime?
+  entryPriceSpot Decimal    @db.Decimal(18, 8)
+  entryPriceFutures Decimal @db.Decimal(18, 8)
+  exitPriceSpot  Decimal?   @db.Decimal(18, 8)
+  exitPriceFutures Decimal? @db.Decimal(18, 8)
+  sizeUsd        Decimal    @db.Decimal(12, 2)
+  pnlUsd         Decimal?   @db.Decimal(12, 2)
+  pnlPct         Decimal?   @db.Decimal(8, 4)
+  feesUsd        Decimal?   @db.Decimal(12, 2)
+  status         String     @default("OPEN") @db.VarChar(20)
+  meta           Json?
+
+  @@index([entryAt])
+  @@index([symbol])
+  @@index([status])
+  @@map("paper_trades")
+}

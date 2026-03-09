@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoArb - Calculadora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg-body: #0a0d12; 
+            --bg-card: #151a23; 
+            --bg-card-hover: #1a2029;
+            --border-color: #1e2632; 
+            --border-glow: rgba(252, 213, 53, 0.15);
+            --primary: #FCD535; 
+            --primary-glow: rgba(252, 213, 53, 0.25);
+            --text-main: #eaecef; 
+            --text-sub: #848e9c; 
+            --green: #0ecb81; 
+            --green-glow: rgba(14, 203, 129, 0.2);
+            --red: #f6465d; 
+            --red-glow: rgba(246, 70, 93, 0.2);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.2);
+            --gradient-gold: linear-gradient(135deg, #FCD535 0%, #f0b90b 50%, #e6a800 100%);
+            --gradient-dark: linear-gradient(180deg, #0f1319 0%, #0a0d12 100%);
+            --gradient-card: linear-gradient(145deg, rgba(30, 38, 50, 0.6) 0%, rgba(15, 19, 25, 0.8) 100%);
+            --glass-bg: rgba(21, 26, 35, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --shadow-glow: 0 0 30px rgba(252, 213, 53, 0.1);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: var(--gradient-dark);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            padding: 24px; 
+            display: flex; 
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(252, 213, 53, 0.06), transparent),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.04), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container { 
+            width: 100%; 
+            max-width: 1280px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .top-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--gradient-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 18px 28px; 
+            border-radius: 16px; 
+            border: 1px solid var(--glass-border); 
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-card);
+        }
+        
+        .nav-brand { 
+            font-size: 20px; 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-brand i {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-new { 
+            background: var(--gradient-gold);
+            color: #000; 
+            border: none; 
+            padding: 12px 24px; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 13px;
+            box-shadow: 0 4px 20px rgba(252, 213, 53, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-new:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 30px rgba(252, 213, 53, 0.4);
+        }
+
+        #calc-panel { display: none; animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+        
+        .calc-card { 
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 18px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .calc-card:first-child::before {
+            background: var(--gradient-gold);
+        }
+        
+        .calc-card:last-child::before {
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+        }
+        
+        .calc-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .calc-card:hover::before {
+            opacity: 1;
+        }
+        
+        .header-input-box { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            margin-bottom: 16px; 
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            padding: 18px 24px; 
+            border-radius: 14px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-card);
+        }
+        
+        .input-symbol { 
+            background: var(--bg-body); 
+            border: 2px solid var(--border-color); 
+            color: var(--primary); 
+            padding: 12px 16px; 
+            border-radius: 10px; 
+            font-weight: 800; 
+            text-align: center; 
+            width: 200px; 
+            text-transform: uppercase; 
+            font-size: 18px; 
+            letter-spacing: 2px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .input-symbol:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        
+        .card-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 14px; 
+            margin-bottom: 14px; 
+        }
+        .card-title { 
+            font-size: 16px; 
+            font-weight: 700; 
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .entry-title { color: var(--primary); }
+        .entry-title::before { background: var(--gradient-gold); }
+        
+        .exit-title { color: #3b82f6; }
+        .exit-title::before { background: linear-gradient(180deg, #3b82f6, #6366f1); }
+        
+        .toggle-switch { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 12px; 
+            cursor: pointer; 
+            color: var(--text-main); 
+            background: rgba(0,0,0,0.3); 
+            padding: 8px 14px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .toggle-switch:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .pulse-dot { 
+            display: inline-block; 
+            width: 10px; 
+            height: 10px; 
+            background-color: var(--red); 
+            border-radius: 50%; 
+            margin-left: 6px; 
+            box-shadow: 0 0 8px var(--red); 
+            transition: all 0.3s ease;
+        }
+        .toggle-switch input:checked ~ .pulse-dot { 
+            background-color: var(--green); 
+            box-shadow: 0 0 12px var(--green-glow); 
+            animation: pulse 1.5s infinite; 
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .input-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; align-items: end; }
+        .input-group label { 
+            display: block; 
+            font-size: 10px; 
+            color: var(--text-sub); 
+            margin-bottom: 6px; 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input { 
+            width: 100%; 
+            background: var(--bg-body); 
+            border: 1px solid var(--border-color); 
+            padding: 12px 14px; 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus { 
+            outline: none; 
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(252, 213, 53, 0.1);
+        }
+
+        .grid-result { 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid var(--border-color); 
+            padding: 18px; 
+            border-radius: 12px; 
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .grid-result::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+        
+        .res-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .res-flex:last-child { margin-bottom: 0; }
+        .res-big { 
+            font-size: 24px; 
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .res-small { font-size: 14px; font-weight: 600; color: #888; }
+
+        .total-panel { 
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            padding: 24px 28px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 24px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .total-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-gold);
+        }
+        
+        .final-pnl { 
+            font-size: 32px; 
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            margin-left: 12px;
+        }
+        
+        .btn-save { 
+            background: var(--gradient-gold);
+            color: #000; 
+            border: none; 
+            padding: 14px 32px; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(252, 213, 53, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(252, 213, 53, 0.4);
+        }
+        
+        .btn-cancel { 
+            background: transparent; 
+            border: 1px solid var(--border-color); 
+            color: var(--text-sub); 
+            padding: 14px 24px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            margin-right: 12px; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancel:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        
+        .active-trades-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+        
+        .trade-card-active { 
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+        
+        .trade-card-active:hover {
+            transform: translateY(-4px);
+            border-color: rgba(252, 213, 53, 0.2);
+            box-shadow: var(--shadow-card), 0 8px 40px rgba(252, 213, 53, 0.1);
+        }
+        
+        .tc-header { 
+            background: rgba(0,0,0,0.4); 
+            padding: 14px 18px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .tc-coin { 
+            font-weight: 800; 
+            font-size: 18px; 
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+        .tc-actions i { 
+            cursor: pointer; 
+            margin-left: 12px; 
+            transition: all 0.2s ease; 
+            font-size: 15px;
+            opacity: 0.7;
+        }
+        .tc-actions i:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .tc-profit-box { 
+            text-align: center; 
+            padding: 20px; 
+            border-bottom: 1px solid var(--border-color); 
+            background: rgba(0,0,0,0.2); 
+        }
+        .tc-profit-val { 
+            font-size: 28px; 
+            font-weight: 800; 
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .tc-profit-pct { font-size: 14px; font-weight: 600; margin-top: 6px; }
+        
+        .tc-body { display: grid; grid-template-columns: 1fr 1fr; padding: 14px; gap: 12px; font-size: 11px; }
+        .tc-col { display: flex; flex-direction: column; gap: 8px; }
+        .tc-col-title { 
+            font-weight: 700; 
+            color: var(--text-sub); 
+            text-align: center; 
+            margin-bottom: 6px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 6px;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+        .tc-row { display: flex; justify-content: space-between; }
+        .tc-label { color: #666; }
+        .tc-val { font-weight: 600; color: var(--text-main); font-family: 'JetBrains Mono', monospace; }
+        .val-green { color: var(--green) !important; text-shadow: 0 0 15px var(--green-glow); }
+        .val-red { color: var(--red) !important; text-shadow: 0 0 15px var(--red-glow); }
+        .text-blue { color: #3b82f6; text-shadow: 0 0 15px var(--blue-glow); }
+        
+        .status-dot { 
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 6px; 
+        }
+        .status-online { 
+            background-color: var(--green); 
+            box-shadow: 0 0 10px var(--green-glow);
+            animation: pulse 2s infinite;
+        }
+        .status-offline { background-color: var(--red); box-shadow: 0 0 10px var(--red-glow); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th { 
+            text-align: left; 
+            padding: 14px 16px; 
+            color: var(--text-sub); 
+            border-bottom: 1px solid var(--border-color); 
+            background: rgba(0,0,0,0.3);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        td { 
+            padding: 14px 16px; 
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease;
+        }
+        
+        tr:hover td {
+            background: rgba(252, 213, 53, 0.03);
+        }
+        
+        h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+        
+        h3::before {
+            content: '';
+            width: 3px;
+            height: 18px;
+            background: var(--gradient-gold);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 1000px) { .active-trades-container { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .active-trades-container { grid-template-columns: 1fr; } .calc-wrapper { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <i class="fa-solid fa-layer-group" style="color:var(--primary)"></i> Gestão de Operações
+                <span id="wsStatusTag" style="font-size:11px; margin-left:14px; color:#555; display:flex; align-items:center;">
+                    <span id="wsDot" class="status-dot status-offline"></span> <span id="wsText">Conectando...</span>
+                </span>
+            </div>
+            <button class="btn-new" onclick="openNewTrade()">
+                <i class="fa-solid fa-plus"></i> Nova Operação
+            </button>
+        </nav>
+
+        <div id="calc-panel">
+            <input type="hidden" id="editTradeId" value="">
+            <input type="hidden" id="exBuy" value="Binance">
+            <input type="hidden" id="exSell" value="Mexc">
+
+            <div class="header-input-box">
+                <label style="font-weight:600; color:#888;">Moeda/Par:</label>
+                <input type="text" id="pSymbol" class="input-symbol" placeholder="EX: BTC" onkeyup="this.value = this.value.toUpperCase()">
+            </div>
+
+            <div class="calc-wrapper">
+                <div class="calc-card">
+                    <div class="card-header"><h3 class="card-title entry-title">Ordem de Entrada</h3></div>
+                    <div class="input-row">
+                        <div class="input-group"><label id="lblInSpot">Valor Spot</label><input type="number" id="inSpotPrice" step="0.00000001" placeholder="0.00"></div>
+                        <div class="input-group"><label>QTD Moedas</label><input type="number" id="inSpotQty" step="0.00000001" placeholder="0.00"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group"><label id="lblInShort">Valor Short</label><input type="number" id="inShortPrice" step="0.00000001" placeholder="0.00"></div>
+                        <div class="input-group"><label>QTD Moedas</label><input type="number" id="inShortQty" step="0.00000001" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-result">
+                        <div class="res-flex"><span class="res-small">Lucro Est. $:</span><span id="resInProfit" class="res-big val-green">$0.00</span></div>
+                        <div class="res-flex"><span class="res-small">Spread %:</span><span id="resInPct" class="res-small">0.00%</span></div>
+                    </div>
+                </div>
+
+                <div class="calc-card">
+                    <div class="card-header">
+                        <h3 class="card-title exit-title">Ordem de Saída</h3>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkRealTime" checked onchange="handleManualEdit()"> 
+                            <span>Tempo Real</span> <span class="pulse-dot"></span>
+                        </label>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group"><label id="lblOutSpot">Venda Spot (Bid)</label><input type="number" id="outSpotPrice" step="0.00000001" readonly placeholder="Aguardando..."></div>
+                        <div class="input-group"><label>QTD Moedas</label><input type="number" id="outSpotQty" step="0.00000001" placeholder="0.00"></div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group"><label id="lblOutShort">Compra Fut (Ask)</label><input type="number" id="outShortPrice" step="0.00000001" readonly placeholder="Aguardando..."></div>
+                        <div class="input-group"><label>QTD Moedas</label><input type="number" id="outShortQty" step="0.00000001" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid-result">
+                        <div class="res-flex"><span class="res-small">Realizado $:</span><span id="resOutProfit" class="res-big text-blue">$0.00</span></div>
+                        <div class="res-flex"><span class="res-small">Lucro F. (%):</span><span id="resOutPct" class="res-small">0.00%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-panel">
+                <div><span style="font-size:12px; color:var(--text-sub);">PNL TOTAL</span><span id="resFinalPnL" class="final-pnl">$0.00</span></div>
+                <div>
+                    <button class="btn-cancel" onclick="closeCalc()">Cancelar</button>
+                    <button class="btn-save" onclick="handleSave()"><i class="fa-solid fa-floppy-disk"></i> SALVAR</button>
+                </div>
+            </div>
+            <hr style="border:0; border-top:1px solid var(--border-color); width:100%; margin:24px 0;">
+        </div>
+
+        <h3 style="color:var(--text-main); margin-bottom:12px;"><i class="fa-solid fa-pulse" style="color:var(--green)"></i> Operações em Aberto</h3>
+        <div id="activeTradesGrid" class="active-trades-container"></div>
+        <div id="noActiveMsg" style="text-align:center; color:#555; padding:24px; display:none">Nenhuma operação ativa.</div>
+
+        <h3 style="color:var(--text-main); margin-bottom:12px; margin-top:32px;"><i class="fa-solid fa-clock-rotate-left"></i> Histórico</h3>
+        <div style="background:var(--gradient-card); backdrop-filter:blur(10px); border-radius:16px; padding:20px; border:1px solid var(--glass-border); box-shadow:var(--shadow-card);">
+            <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead><tr><th>Data</th><th>Par</th><th>Entrada $</th><th>Saída $</th><th>PnL Total</th><th>Ação</th></tr></thead>
+                <tbody id="tradeLog"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let activeTrades = [];
+        let historyTrades = [];
+        const params = new URLSearchParams(window.location.search);
+
+        function norm(str) { 
+            if(!str) return ""; 
+            return str.toLowerCase().trim(); 
+        }
+
+        function updateExchangeLabels(buyEx, sellEx) {
+            const b = buyEx || "Binance";
+            const s = sellEx || "Mexc";
+            document.getElementById('lblInSpot').innerText = `${b} (Spot)`;
+            document.getElementById('lblInShort').innerText = `${s} (Fut)`;
+            document.getElementById('lblOutSpot').innerText = `Venda Spot (${b})`;
+            document.getElementById('lblOutShort').innerText = `Compra Fut (${s})`;
+        }
+
+        // REGRA: Desmarcar Tempo Real = Habilita Manual (Remove Readonly)
+        function handleManualEdit() {
+            const chk = document.getElementById('chkRealTime');
+            const inputs = [document.getElementById('outSpotPrice'), document.getElementById('outShortPrice')];
+            if (chk.checked) inputs.forEach(i => { i.setAttribute('readonly', true); i.placeholder = "Aguardando dados..."; });
+            else inputs.forEach(i => { i.removeAttribute('readonly'); i.placeholder = "Manual"; });
+            calculate();
+        }
+
+        function calculate() {
+            const inSpotP = parseFloat(document.getElementById('inSpotPrice').value)||0;
+            const inSpotQ = parseFloat(document.getElementById('inSpotQty').value)||0;
+            const inShortP = parseFloat(document.getElementById('inShortPrice').value)||0;
+            const inShortQ = parseFloat(document.getElementById('inShortQty').value)||0;
+
+            let inProfit = 0, inSpread = 0;
+            if(inSpotP>0 && inShortP>0) {
+                inSpread = ((inShortP - inSpotP) / inSpotP) * 100;
+                const avgQty = (inSpotQ+inShortQ)/2;
+                if(avgQty>0) inProfit = (inShortP - inSpotP) * avgQty;
+            }
+
+            document.getElementById('resInProfit').innerText = `$${inProfit.toFixed(2)}`;
+            document.getElementById('resInProfit').className = 'res-big ' + (inProfit>=0?'val-green':'val-red');
+            document.getElementById('resInPct').innerText = inSpread.toFixed(2)+'%';
+            document.getElementById('resInPct').className = 'res-small ' + (inSpread>=0?'val-green':'val-red');
+
+            const outSpotP = parseFloat(document.getElementById('outSpotPrice').value)||0;
+            const outSpotQ = parseFloat(document.getElementById('outSpotQty').value)||0; 
+            const outShortP = parseFloat(document.getElementById('outShortPrice').value)||0;
+            const outShortQ = parseFloat(document.getElementById('outShortQty').value)||0; 
+
+            let totalPnL = 0, realizedYield = 0;
+            
+            if(outSpotP>0 && outShortP>0) {
+                const pnlSpot = (outSpotP - inSpotP) * outSpotQ;
+                const pnlShort = (inShortP - outShortP) * outShortQ;
+                totalPnL = pnlSpot + pnlShort;
+                const invested = inSpotP * inSpotQ; 
+                if(invested>0) realizedYield = (totalPnL/invested)*100;
+            }
+
+            const elOutProfit = document.getElementById('resOutProfit');
+            const elOutPct = document.getElementById('resOutPct');
+            
+            if(outSpotP === 0 || outShortP === 0) {
+                elOutProfit.innerText = "$0.00"; elOutProfit.className = "res-big text-blue";
+                elOutPct.innerText = "Aguardando..."; 
+                elOutPct.className = "res-small";
+            } else {
+                elOutProfit.innerText = `$${totalPnL.toFixed(2)}`;
+                elOutProfit.className = 'res-big ' + (totalPnL >= 0 ? 'val-green' : 'val-red');
+
+                const diff = realizedYield - inSpread;
+                if (diff < 0) {
+                    elOutPct.innerText = `${diff.toFixed(2)}% (Falta)`;
+                    elOutPct.className = "res-small val-red";
+                } else {
+                    elOutPct.innerText = `+${realizedYield.toFixed(2)}% (Total)`;
+                    elOutPct.className = "res-small val-green";
+                }
+            }
+
+            const finalDisp = totalPnL !== 0 ? totalPnL : inProfit;
+            document.getElementById('resFinalPnL').innerText = `$${finalDisp.toFixed(2)}`;
+            document.getElementById('resFinalPnL').className = 'final-pnl ' + (finalDisp >= 0 ? 'val-green' : 'val-red');
+
+            return { 
+                symbol: document.getElementById('pSymbol').value,
+                exBuy: document.getElementById('exBuy').value, 
+                exSell: document.getElementById('exSell').value, 
+                inSpotP, inSpotQ, inShortP, inShortQ, inProfit, inSpread, 
+                outSpotP, outSpotQ, outShortP, outShortQ, totalPnL 
+            };
+        }
+
+        let ws;
+        function startWS() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/opportunities?exchanges=mexc,gate,bitget,bingx,mexc_futures,gate_futures,bitget_futures,bingx_futures&min_vol=1000`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                document.getElementById('wsDot').className = "status-dot status-online";
+                document.getElementById('wsText').innerText = "Online";
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    // SÓ ATUALIZA SE TEMPO REAL ESTIVER MARCADO
+                    if(document.getElementById('calc-panel').style.display !== 'none' && document.getElementById('chkRealTime').checked) {
+                        const curSymbol = document.getElementById('pSymbol').value;
+                        const mySpotEx = norm(document.getElementById('exBuy').value); 
+                        const myFutEx = norm(document.getElementById('exSell').value);
+
+                        const entryRow = data.find(c => c.symbol === curSymbol && norm(c.buy_exchange) === mySpotEx && norm(c.sell_exchange) === myFutEx);
+
+                        let spotPrice = 0, futPrice = 0;
+
+                        if (entryRow) {
+                            spotPrice = entryRow.exit_spot_price || 0; 
+                            futPrice = entryRow.exit_fut_price || 0;
+                        }
+
+                        let updated = false;
+                        const elSpot = document.getElementById('outSpotPrice');
+                        const elShort = document.getElementById('outShortPrice');
+
+                        if (spotPrice > 0 && parseFloat(elSpot.value) !== spotPrice) {
+                            elSpot.value = spotPrice;
+                            elSpot.style.borderColor = '#3b82f6';
+                            updated = true;
+                        }
+                        if (futPrice > 0 && parseFloat(elShort.value) !== futPrice) {
+                            elShort.value = futPrice;
+                            elShort.style.borderColor = '#3b82f6';
+                            updated = true;
+                        }
+
+                        if(updated) {
+                            setTimeout(() => {
+                                elSpot.style.borderColor='#2b3139';
+                                elShort.style.borderColor='#2b3139';
+                            }, 300);
+                            calculate();
+                        }
+                    }
+                    
+                    activeTrades.forEach(trade => {
+                        const tSpotEx = norm(trade.exBuy);
+                        const tFutEx = norm(trade.exSell);
+                        const entryData = data.find(c => c.symbol === trade.symbol && norm(c.buy_exchange) === tSpotEx && norm(c.sell_exchange) === tFutEx);
+
+                        if (entryData) {
+                            const sP = entryData.exit_spot_price || 0;
+                            const fP = entryData.exit_fut_price || 0;
+                            if(sP > 0 && fP > 0) updateActiveCard(trade, sP, fP);
+                        }
+                    });
+
+                } catch (err) {}
+            };
+
+            ws.onclose = () => {
+                document.getElementById('wsDot').className = "status-dot status-offline";
+                document.getElementById('wsText').innerText = "Reconectando...";
+                setTimeout(startWS, 3000);
+            };
+        }
+
+        async function fetchTrades() {
+            try {
+                const resActive = await fetch('/api/trades/active').catch(()=>({ok:false})); 
+                if(resActive.ok) activeTrades = await resActive.json();
+                
+                const resHistory = await fetch('/api/trades/history').catch(()=>({ok:false}));
+                if(resHistory.ok) historyTrades = await resHistory.json();
+                
+                renderActiveGrid();
+                renderHistory();
+            } catch(e) { console.log("Modo offline"); }
+        }
+
+        // REGRA DE SALVAMENTO:
+        // Se Tempo Real (Live) marcado -> Salva como "LIVE" -> Vai para Grid Ativo
+        // Se Tempo Real (Live) DESMARCADO -> Salva como "ENCERRADO" -> Vai para Histórico e Fecha Calculadora
+        async function handleSave() {
+            const isLive = document.getElementById('chkRealTime').checked;
+            const data = calculate();
+
+            if(!data.symbol) return alert("Digite o nome da moeda!");
+            if(data.inSpotQ <= 0) return alert("Preencha a quantidade!");
+
+            const pnlValue = isLive ? "0.00" : document.getElementById('resFinalPnL').innerText.replace('$','');
+            const existingId = document.getElementById('editTradeId').value;
+            const tradeId = existingId ? parseInt(existingId) : Date.now();
+
+            // Lógica Central: Se NÃO é Live (Manual), então o status é ENCERRADO
+            const statusVal = isLive ? "LIVE" : "ENCERRADO";
+
+            const trade = {
+                id: tradeId,
+                symbol: data.symbol,
+                exBuy: data.exBuy, 
+                exSell: data.exSell, 
+                entry: {
+                    spotP: data.inSpotP, spotQ: data.inSpotQ,
+                    shortP: data.inShortP, shortQ: data.inShortQ,
+                    profit: data.inProfit, spread: data.inSpread 
+                },
+                outVal: statusVal, 
+                pnl: String(pnlValue) 
+            };
+
+            const btn = document.querySelector('.btn-save');
+            btn.innerHTML = 'Salvando...';
+            await apiSaveTrade(trade);
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SALVAR';
+            
+            closeCalc(); // Fecha o painel após salvar (regra solicitada)
+        }
+
+        async function apiSaveTrade(tradeData) {
+            try {
+                const response = await fetch('/api/trades', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(tradeData)
+                });
+                if (!response.ok) throw new Error("Erro API");
+                await fetchTrades(); 
+            } catch (e) {
+                // FALLBACK VISUAL EM CASO DE ERRO PARA NÃO TRAVAR O USUÁRIO
+                if(tradeData.outVal === "ENCERRADO") {
+                    historyTrades.push({...tradeData, timestamp: Date.now()/1000});
+                    activeTrades = activeTrades.filter(t => t.id !== tradeData.id);
+                } else {
+                    const idx = activeTrades.findIndex(t => t.id === tradeData.id);
+                    if(idx >= 0) activeTrades[idx] = tradeData;
+                    else activeTrades.push(tradeData);
+                }
+                renderActiveGrid();
+                renderHistory();
+            }
+        }
+
+        async function apiDeleteTrade(id) {
+            if(confirm("Excluir definitivamente?")) {
+                await fetch(`/api/trades/${id}`, { method: 'DELETE' }).catch(()=>{});
+                activeTrades = activeTrades.filter(t => t.id !== id);
+                historyTrades = historyTrades.filter(t => t.id !== id);
+                renderActiveGrid();
+                renderHistory();
+            }
+        }
+
+        async function apiCloseTrade(id) {
+            if(!confirm("Encerrar operação?")) return;
+            const t = activeTrades.find(x => x.id === id);
+            if(t) {
+                const elPnl = document.getElementById(`live-pnl-${id}`);
+                const finalPnl = elPnl ? elPnl.innerText.replace('$','') : "0.00";
+                t.outVal = "ENCERRADO";
+                t.pnl = finalPnl;
+                await apiSaveTrade(t);
+            }
+        }
+
+        function updateActiveCard(trade, curSpot, curShort) {
+            const elPnlMain = document.getElementById(`card-pnl-${trade.id}`);
+            const elPctMain = document.getElementById(`card-pct-${trade.id}`);
+            const elLiveSpot = document.getElementById(`live-spot-${trade.id}`);
+            const elLiveShort = document.getElementById(`live-short-${trade.id}`);
+            const elLiveSpread = document.getElementById(`live-spread-${trade.id}`);
+            const elLivePnl = document.getElementById(`live-pnl-${trade.id}`);
+
+            if(!elPnlMain) return;
+
+            elLiveSpot.innerText = `$${curSpot}`;
+            elLiveShort.innerText = `$${curShort}`;
+
+            const pnlSpot = (curSpot - trade.entry.spotP) * trade.entry.spotQ;
+            const pnlShort = (trade.entry.shortP - curShort) * trade.entry.shortQ;
+            const currentTotalPnl = pnlSpot + pnlShort;
+
+            const invested = trade.entry.spotP * trade.entry.spotQ;
+            let currentYield = 0;
+            if (invested > 0) currentYield = (currentTotalPnl / invested) * 100;
+
+            const inSpread = parseFloat(trade.entry.spread || 0);
+            const diff = currentYield - inSpread;
+
+            elPnlMain.innerText = `$${currentTotalPnl.toFixed(2)}`;
+            elPnlMain.className = 'tc-profit-val ' + (currentTotalPnl>=0?'val-green':'val-red');
+            
+            if (diff < 0) {
+                elPctMain.innerText = `${diff.toFixed(2)}% (Falta)`;
+                elPctMain.className = 'tc-profit-pct val-red';
+                elLiveSpread.innerText = `${diff.toFixed(2)}%`;
+                elLiveSpread.className = 'tc-val val-red';
+            } else {
+                elPctMain.innerText = `+${currentYield.toFixed(2)}% (Total)`;
+                elPctMain.className = 'tc-profit-pct val-green';
+                elLiveSpread.innerText = `+${currentYield.toFixed(2)}%`;
+                elLiveSpread.className = 'tc-val val-green';
+            }
+            
+            elLivePnl.innerText = `$${currentTotalPnl.toFixed(2)}`;
+            elLivePnl.className = 'tc-val ' + (currentTotalPnl>=0?'val-green':'val-red');
+        }
+
+        function renderActiveGrid() {
+            const container = document.getElementById('activeTradesGrid');
+            container.innerHTML = '';
+            document.getElementById('noActiveMsg').style.display = activeTrades.length === 0 ? 'block' : 'none';
+
+            activeTrades.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'trade-card-active';
+                card.innerHTML = `
+                    <div class="tc-header">
+                        <span class="tc-coin">${t.symbol}</span>
+                        <div class="tc-actions">
+                            <i class="fa-solid fa-pen" onclick="editTrade(${t.id})" title="Editar"></i>
+                            <i class="fa-solid fa-circle-check" style="color:#0ecb81" onclick="apiCloseTrade(${t.id})" title="Encerrar"></i>
+                            <i class="fa-solid fa-trash" style="color:#f6465d" onclick="apiDeleteTrade(${t.id})" title="Excluir"></i>
+                        </div>
+                    </div>
+                    <div style="text-align:center; padding:6px; font-size:11px; color:#666;">
+                            ${t.exBuy || 'Spot'} <i class="fa-solid fa-arrow-right"></i> ${t.exSell || 'Futuros'}
+                    </div>
+                    <div class="tc-profit-box">
+                        <div class="tc-profit-val" id="card-pnl-${t.id}">...</div>
+                        <div class="tc-profit-pct" id="card-pct-${t.id}">...</div>
+                    </div>
+                    <div class="tc-body">
+                        <div class="tc-col" style="border-right:1px solid #2b3139; padding-right:10px;">
+                            <div class="tc-col-title" style="color:var(--primary)">ENTRADA</div>
+                            <div class="tc-row"><span class="tc-label">QTD:</span> <span class="tc-val">${t.entry.spotQ}</span></div>
+                            <div class="tc-row"><span class="tc-label">Spot:</span> <span class="tc-val">$${t.entry.spotP}</span></div>
+                            <div class="tc-row"><span class="tc-label">Short:</span> <span class="tc-val">$${t.entry.shortP}</span></div>
+                            <div class="tc-row"><span class="tc-label">Spread:</span> <span class="tc-val">${parseFloat(t.entry.spread).toFixed(2)}%</span></div>
+                            <div class="tc-row"><span class="tc-label">Meta:</span> <span class="tc-val val-green">$${parseFloat(t.entry.profit).toFixed(2)}</span></div>
+                        </div>
+                        <div class="tc-col" style="padding-left:5px;">
+                            <div class="tc-col-title" style="color:#3b82f6">FECHAMENTO <i class="fa-solid fa-bolt" style="font-size:10px"></i></div>
+                            <div class="tc-row"><span class="tc-label">QTD:</span> <span class="tc-val">${t.entry.spotQ}</span></div>
+                            <div class="tc-row"><span class="tc-label">Venda Spot:</span> <span class="tc-val" id="live-spot-${t.id}">...</span></div>
+                            <div class="tc-row"><span class="tc-label">Comp. Short:</span> <span class="tc-val" id="live-short-${t.id}">...</span></div>
+                            <div class="tc-row"><span class="tc-label">Lucro F.:</span> <span class="tc-val" id="live-spread-${t.id}">...</span></div>
+                            <div class="tc-row"><span class="tc-label">PnL:</span> <span class="tc-val" id="live-pnl-${t.id}">...</span></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('tradeLog');
+            tbody.innerHTML = '';
+            
+            historyTrades.slice().reverse().forEach(t => {
+                const row = document.createElement('tr');
+                const date = new Date((t.timestamp || Date.now()/1000) * 1000).toLocaleString();
+                const pnl = parseFloat(t.pnl);
+                row.innerHTML = `
+                    <td>${date}</td>
+                    <td>${t.symbol}</td>
+                    <td>$${t.entry.spotP}</td>
+                    <td>ENCERRADO</td>
+                    <td class="${pnl>=0?'val-green':'val-red'}">$${pnl.toFixed(2)}</td>
+                    <td><button class="btn-del" onclick="apiDeleteTrade(${t.id})"><i class="fa-solid fa-trash"></i></button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openNewTrade() {
+            document.getElementById('editTradeId').value = "";
+            document.getElementById('pSymbol').value = "";
+            document.getElementById('exBuy').value = "Binance";
+            document.getElementById('exSell').value = "Mexc";
+            updateExchangeLabels("Binance", "Mexc");
+            document.querySelectorAll('#calc-panel input[type=number]').forEach(i => i.value = "");
+            openCalcPanel();
+            document.getElementById('pSymbol').focus();
+            calculate();
+        }
+
+        function editTrade(id) {
+            const t = activeTrades.find(x => x.id === id);
+            if(t) {
+                document.getElementById('editTradeId').value = t.id;
+                document.getElementById('pSymbol').value = t.symbol;
+                document.getElementById('exBuy').value = t.exBuy || "Binance";
+                document.getElementById('exSell').value = t.exSell || "Mexc";
+                updateExchangeLabels(t.exBuy, t.exSell);
+                document.getElementById('inSpotPrice').value = t.entry.spotP;
+                document.getElementById('inSpotQty').value = t.entry.spotQ;
+                document.getElementById('inShortPrice').value = t.entry.shortP;
+                document.getElementById('inShortQty').value = t.entry.shortQ;
+                openCalcPanel();
+                calculate();
+            }
+        }
+
+        function openCalcPanel() { document.getElementById('calc-panel').style.display = 'block'; }
+        function closeCalc() { document.getElementById('calc-panel').style.display = 'none'; }
+
+        // Inicialização
+        window.onload = function() {
+            fetchTrades(); // Carrega do Banco de Dados
+            startWS();     // Inicia WebSocket
+            
+            if(params.has('symbol')) {
+                openCalcPanel();
+                document.getElementById('pSymbol').value = params.get('symbol');
+                const buyEx = params.get('bex') || params.get('buyEx') || "Binance";
+                const sellEx = params.get('sex') || params.get('sellEx') || "Mexc";
+                document.getElementById('exBuy').value = buyEx;
+                document.getElementById('exSell').value = sellEx;
+                updateExchangeLabels(buyEx, sellEx);
+                if(params.has('buy')) document.getElementById('inSpotPrice').value = params.get('buy');
+                if(params.has('sell')) document.getElementById('inShortPrice').value = params.get('sell');
+                calculate();
+            }
+        };
+
+        document.getElementById('inSpotQty').addEventListener('input', (e) => {
+            const val = e.target.value;
+            if(!document.getElementById('inShortQty').value) document.getElementById('inShortQty').value = val;
+            if(document.getElementById('chkRealTime').checked) {
+                document.getElementById('outSpotQty').value = val;
+                document.getElementById('outShortQty').value = val;
+                calculate();
+            }
+        });
+        document.querySelectorAll('input').forEach(i => i.addEventListener('input', calculate));
+    </script>
+
+</body>
+</html>

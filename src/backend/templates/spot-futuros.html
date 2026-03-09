@@ -1,0 +1,2600 @@
+{% extends "base.html" %}
+
+{% set page = 'spot-futuros' %}
+
+{% block title %}Mesa (Intelligence){% endblock %}
+{% block header_title %}Spot x Futuros - Intelligence{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ==========================================================================
+       MODERN DESIGN SYSTEM - V2.0 CRYPTO ARBITRAGE
+       ========================================================================== */
+
+    /* === MODERN VARIABLES ENHANCEMENT === */
+    :root {
+        --gradient-card-modern: linear-gradient(145deg, rgba(30, 38, 50, 0.7) 0%, rgba(15, 19, 25, 0.9) 100%);
+        --glass-blur: blur(20px);
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --shadow-modern: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ==========================================================================
+       1. SEU CÓDIGO ORIGINAL (TOOLBAR, FILTROS & PERFIS) - MODERNIZADO
+       ========================================================================== */
+    #tableBody .coin-wrapper {
+        width: 24px !important;
+        height: 24px !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #tableBody img.coin-icon {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease;
+    }
+
+    #tableBody img.coin-icon:hover {
+        transform: scale(1.1);
+    }
+
+    #tableBody i.action-btn {
+        font-size: 13px !important;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+        opacity: 0.7;
+    }
+
+    #tableBody i.action-btn:hover {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    /* Toolbar Modernizado */
+    .toolbar {
+        background: #060607;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: var(--shadow-modern);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .toolbar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient-gold);
+        opacity: 0.5;
+    }
+
+    .tool-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 14px;
+    }
+
+    .right-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .btn-filter-toggle {
+        background: var(--gradient-gold);
+        color: #000;
+        font-weight: 700;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        box-shadow: 0 4px 15px rgba(252, 213, 53, 0.3);
+        transition: var(--transition-smooth);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-filter-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(252, 213, 53, 0.4);
+    }
+
+    .filter-expanded-area {
+        display: none;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 8px;
+        border: 1px solid var(--glass-border);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* [RESTAURADO] Grid de Filtros: 4 Colunas - MODERNIZADO */
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .filter-col {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: var(--transition-smooth);
+    }
+
+    .filter-col:hover {
+        border-color: rgba(252, 213, 53, 0.15);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .filter-col h4 {
+        margin: 0 0 12px 0;
+        color: var(--text-secondary);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 10px;
+        color: #888;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .filter-input {
+        width: 100%;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        color: white;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        transition: var(--transition-smooth);
+    }
+
+    .filter-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 15px rgba(252, 213, 53, 0.15);
+    }
+
+    .exch-list {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+    }
+
+    .exch-check {
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 10px;
+        color: #888;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition-smooth);
+    }
+
+    .exch-check:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #bbb;
+    }
+
+    .exch-check.checked {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.5);
+        color: #3b82f6;
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+    }
+
+    .exch-check img {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        opacity: 0.5;
+        filter: grayscale(100%);
+        transition: var(--transition-smooth);
+    }
+
+    .exch-check.checked img {
+        opacity: 1;
+        filter: grayscale(0%);
+    }
+
+    .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 10px;
+        margin-top: 5px;
+    }
+
+    .btn-apply {
+        background: linear-gradient(135deg, var(--green), #10b981);
+        color: white;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+        box-shadow: 0 4px 15px rgba(14, 203, 129, 0.3);
+        transition: var(--transition-smooth);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-apply:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(14, 203, 129, 0.4);
+    }
+
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--red);
+        color: var(--red);
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+        transition: var(--transition-smooth);
+    }
+
+    .btn-cancel:hover {
+        background: rgba(246, 70, 93, 0.1);
+    }
+
+    .search-box {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition-smooth);
+    }
+
+    .search-box:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 15px rgba(252, 213, 53, 0.1);
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        color: white;
+        outline: none;
+        font-size: 12px;
+        width: 120px;
+    }
+
+    .search-box input::placeholder {
+        color: #666;
+    }
+
+    .btn-action {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: var(--transition-smooth);
+    }
+
+    .btn-action:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* --- [RESTAURADO] PERFIS & CORES DOS BOTÕES - MODERNIZADO --- */
+    .profile-btns {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-profile {
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #000;
+        opacity: 0.85;
+        transition: var(--transition-smooth);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .btn-profile:hover {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+
+    /* Cores de Fundo dos Botões */
+    .prof-green {
+        background-color: #4ade80 !important;
+    }
+
+    .prof-yellow {
+        background-color: #FCD535 !important;
+    }
+
+    .prof-red {
+        background-color: #f87171 !important;
+    }
+
+    /* Tags de Texto do Resumo - MODERNIZADO */
+    .profile-tag {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        letter-spacing: 0.3px;
+    }
+
+    .prof-conservador {
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.15);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        box-shadow: 0 0 10px rgba(74, 222, 128, 0.1);
+    }
+
+    .prof-moderado {
+        color: #FCD535;
+        background: rgba(252, 213, 53, 0.15);
+        border: 1px solid rgba(252, 213, 53, 0.3);
+        box-shadow: 0 0 10px rgba(252, 213, 53, 0.1);
+    }
+
+    .prof-agressivo {
+        color: #f87171;
+        background: rgba(248, 113, 113, 0.15);
+        border: 1px solid rgba(248, 113, 113, 0.3);
+        box-shadow: 0 0 10px rgba(248, 113, 113, 0.1);
+    }
+
+    .prof-manual {
+        color: #9ca3af;
+        background: rgba(156, 163, 175, 0.15);
+        border: 1px solid rgba(156, 163, 175, 0.3);
+    }
+
+    .prof-auto {
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .filter-summary-bar {
+        margin-top: 4px;
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 11px;
+        color: #888;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        height: auto;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .summary-value {
+        color: #eee;
+        font-weight: bold;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Lista Bloqueados - MODERNIZADO */
+    .blocked-list-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-height: 140px;
+        overflow-y: auto;
+        padding: 4px 0;
+    }
+
+    .blocked-tag {
+        background: rgba(248, 113, 113, 0.12);
+        border: 1px solid rgba(248, 113, 113, 0.25);
+        color: #f87171;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition-smooth);
+    }
+
+    .blocked-tag:hover {
+        background: rgba(248, 113, 113, 0.2);
+    }
+
+    .blocked-tag i {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .blocked-tag i:hover {
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* ==========================================================================
+       2. TABELA & COLUNAS (CENTRALIZADO) - MODERNIZADO
+       ========================================================================== */
+    .table-container {
+        background: #060607;
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        overflow-x: auto;
+        box-shadow: var(--shadow-modern);
+        position: relative;
+    }
+
+    .table-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        opacity: 0.3;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    th,
+    td {
+        padding: 12px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    th {
+        color: var(--text-secondary);
+        font-size: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+        position: relative;
+        transition: var(--transition-smooth);
+    }
+
+    th:hover {
+        color: var(--primary-color);
+        background: rgba(252, 213, 53, 0.05);
+    }
+
+    th.active-sort {
+        color: var(--primary-color);
+        font-weight: 700;
+        background: rgba(252, 213, 53, 0.1);
+    }
+
+    th.active-sort::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: var(--gradient-gold);
+    }
+
+    td {
+        font-size: 12px;
+        color: var(--text-primary);
+        transition: var(--transition-smooth);
+    }
+
+    tr {
+        transition: var(--transition-smooth);
+    }
+
+    tr:hover {
+        background: rgba(252, 213, 53, 0.03) !important;
+    }
+
+    tr.row-trap {
+        background: rgba(239, 68, 68, 0.06) !important;
+    }
+
+    tr.row-trap:hover {
+        background: rgba(239, 68, 68, 0.12) !important;
+    }
+
+    /* Larguras Fixas - 12 Colunas Refatoradas */
+    th:first-child,
+    td:first-child { /* Score */
+        width: 70px !important;
+        min-width: 70px;
+    }
+
+    th:nth-child(2),
+    td:nth-child(2) { /* Ativo */
+        width: 130px !important;
+        min-width: 130px;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) { /* Spread */
+        width: 80px !important;
+        min-width: 80px;
+    }
+
+    th:nth-child(4),
+    td:nth-child(4) { /* Volume 24h */
+        width: 100px !important;
+        min-width: 100px;
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) { /* Lucro/ROI */
+        width: 110px !important;
+        min-width: 110px;
+    }
+
+    th:nth-child(6),
+    td:nth-child(6) { /* Exchanges */
+        width: 90px !important;
+        min-width: 90px;
+    }
+
+    th:nth-child(7),
+    td:nth-child(7) { /* Preço */
+        width: 110px !important;
+        min-width: 110px;
+    }
+
+    th:nth-child(8),
+    td:nth-child(8) { /* Taxa de Funding */
+        width: 80px !important;
+        min-width: 80px;
+    }
+
+    th:nth-child(9),
+    td:nth-child(9) { /* Faixa de Preço */
+        width: 90px !important;
+        min-width: 90px;
+    }
+
+    th:nth-child(10),
+    td:nth-child(10) { /* Num. de Ordens */
+        width: 80px !important;
+        min-width: 80px;
+    }
+
+    th:nth-child(11),
+    td:nth-child(11) { /* Status */
+        width: 70px !important;
+        min-width: 70px;
+    }
+
+    th:nth-child(12),
+    td:nth-child(12) { /* Ação */
+        width: 90px !important;
+        min-width: 90px;
+    }
+
+    .sort-indicator {
+        margin: 10px 0 6px 0;
+        font-size: 12px;
+        color: #c9d1d9;
+    }
+
+    .sort-indicator-key {
+        font-weight: 700;
+        color: #f0b90b;
+    }
+
+    th.sortable {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .sort-arrow {
+        margin-left: 6px;
+        font-size: 10px;
+        opacity: .55;
+    }
+
+    th.sortable.active-sort .sort-arrow {
+        opacity: 1;
+        color: #f0b90b;
+    }
+
+    /* ==========================================================================
+       3. CAPACITY INTELLIGENCE (CORES COM !IMPORTANT)
+       ========================================================================== */
+    .col-capacity {
+        padding: 4px !important;
+        position: relative;
+        transition: background-color 0.2s;
+        width: 95px !important;
+        min-width: 95px;
+    }
+
+    /* Bandas por MAX (Fundo + Borda Esquerda) */
+    .col-capacity.cap-min {
+        background: rgba(246, 70, 93, 0.08) !important;
+        border-left: 3px solid #F6465D !important;
+    }
+
+    .col-capacity.cap-med {
+        background: rgba(252, 213, 53, 0.06) !important;
+        border-left: 3px solid #FCD535 !important;
+    }
+
+    .col-capacity.cap-max {
+        background: rgba(14, 203, 129, 0.06) !important;
+        border-left: 3px solid #0ECB81 !important;
+    }
+
+    .col-capacity.cap-none {
+        background: rgba(100, 100, 100, 0.05) !important;
+        border-left: 3px solid #666 !important;
+    }
+
+    .col-capacity.cap-inop {
+        background: rgba(127, 29, 29, 0.15) !important;
+        border-left: 3px solid #7f1d1d !important;
+        opacity: 0.75;
+    }
+
+    /* Ratio do Recomendado (Cor do Texto) */
+    .rec-usd {
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: -0.5px;
+        margin-bottom: 2px;
+    }
+
+    .rec-usd.ratio-ok {
+        color: #0ECB81 !important;
+    }
+
+    .rec-usd.ratio-warn {
+        color: #FCD535 !important;
+    }
+
+    .rec-usd.ratio-risk {
+        color: #F6465D !important;
+    }
+
+    .rec-usd.ratio-unk {
+        color: #aaa !important;
+    }
+
+    .cap-meta {
+        font-size: 10px;
+        color: #94a3b8;
+        opacity: 0.9;
+    }
+
+    .cap-note {
+        font-size: 8px;
+        font-weight: bold;
+        color: #f59e0b;
+        opacity: 0.9;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cap-usd {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    /* Cores de apoio */
+    .cap-high {
+        color: #10b981;
+    }
+
+    .cap-med {
+        color: #f59e0b;
+    }
+
+    .cap-low {
+        color: #ef4444;
+    }
+
+    /* --- CSS V109: Coluna Capacity Dual Pocket --- */
+    .cap-dual-row {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        line-height: 1.1;
+    }
+
+    .cap-main {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .cap-sub {
+        font-size: 9px;
+        color: #aaa;
+        font-family: monospace;
+    }
+
+    .cap-limiters {
+        display: flex;
+        gap: 2px;
+        margin-top: 3px;
+    }
+
+    .limiter-tag {
+        font-size: 8px;
+        padding: 1px 3px;
+        border-radius: 2px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #000;
+    }
+
+    .limiter-liquidity {
+        background: #FCD535;
+    }
+
+    .limiter-profile {
+        background: #3b82f6;
+        color: #fff;
+    }
+
+    .limiter-capital {
+        background: #ef4444;
+        color: #fff;
+    }
+
+    .limiter-default {
+        background: #666;
+        color: #fff;
+    }
+
+    .capped-badge {
+        font-size: 8px;
+        color: #FCD535;
+        font-weight: bold;
+        margin-top: 1px;
+        display: block;
+    }
+
+    /* ==========================================================================
+       4. TAGS E OUTROS COMPONENTES
+       ========================================================================== */
+    .tag-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+        margin-top: 3px;
+        width: 74px;
+        min-width: 74px;
+    }
+
+    .tag {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1px 2px;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 9px;
+        font-weight: 700;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        cursor: help;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: -0.2px;
+        width: 100%;
+        overflow: hidden;
+        color: #94a3b8;
+        background: rgba(148, 163, 184, 0.1);
+        border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    .tag.sev-trap {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .tag.sev-warn {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.15);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .tag.sev-good {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.15);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .tag.sev-info {
+        color: #94a3b8;
+        background: rgba(148, 163, 184, 0.15);
+        border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    .tag.sev-debug {
+        color: #64748b;
+        background: transparent;
+        border: 1px dashed #475569;
+        opacity: 0.7;
+    }
+
+    /* Tags Específicas */
+    .tag.REAL_BOOK {
+        border-color: #4ade80;
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.05);
+        border-style: solid;
+    }
+
+    .tag.SIM_BOOK {
+        border-color: #94a3b8;
+        color: #94a3b8;
+        border-style: dashed;
+        opacity: 0.8;
+    }
+
+    .tag.HALF_BOOK {
+        border-color: #facc15;
+        color: #facc15;
+        border-style: dashed;
+        opacity: 0.9;
+    }
+
+    .tag.SYNTHETIC_DEPTH {
+        border-color: #9ca3af;
+        color: #9ca3af;
+        border-style: dashed;
+        font-style: italic;
+    }
+
+    .tag.REAL_DEPTH {
+        border-color: #22c55e;
+        color: #22c55e;
+        font-weight: bold;
+    }
+
+    .tag.OBSERVATION {
+        border-color: #64748b;
+        color: #64748b;
+        border-style: dotted;
+    }
+
+    .tag.FEE_BLOCKED {
+        border-color: #f59e0b;
+        color: #f59e0b;
+    }
+
+    .tag.NEGATIVE_SPREAD {
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .tag.DEPTH_STRONG {
+        border-color: #22c55e;
+        color: #22c55e;
+        background: rgba(34, 197, 94, 0.08);
+        font-weight: 700;
+    }
+
+    .tag.DEPTH_OK {
+        border-color: #38bdf8;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.08);
+    }
+
+    .tag.THIN_DEPTH {
+        border-color: #facc15;
+        color: #facc15;
+        background: rgba(250, 204, 21, 0.08);
+    }
+
+    .tag.DEPTH_TRAP {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.12);
+        font-weight: 800;
+        animation: pulse-red 2s infinite;
+    }
+
+    .tag.TRAP {
+        background: rgba(246, 70, 93, 0.2);
+        color: #F6465D;
+        border-color: #F6465D;
+        font-weight: bold;
+        animation: pulse-red 2s infinite;
+    }
+
+    .tag.UNSTABLE {
+        background: rgba(249, 115, 22, 0.2);
+        color: #f97316;
+        border-color: #f97316;
+    }
+
+    .tag.SOLID {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10B981;
+        border-color: #10B981;
+        font-weight: bold;
+    }
+
+    .tag.HIGH_LIQ {
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    .tag.ALPHA {
+        border-color: #a371f7;
+        color: #a371f7;
+    }
+
+    .tag.VOLATILE {
+        border-color: #f97316;
+        color: #f97316;
+    }
+
+    .tag.NEW {
+        border-color: #06b6d4;
+        color: #06b6d4;
+    }
+
+    .tag.NO_DEPTH_DATA {
+        display: none;
+    }
+
+    /* Outros - MODERNIZADO */
+    .vol-highlight {
+        color: #10B981;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .pnl-highlight {
+        font-size: 9px;
+        font-weight: bold;
+    }
+
+    .price-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #ddd;
+        font-weight: 500;
+    }
+
+    .exch-label {
+        font-size: 10px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+    }
+
+    .exch-label a {
+        transition: var(--transition-smooth);
+    }
+
+    .exch-label a:hover {
+        text-shadow: 0 0 10px currentColor;
+    }
+
+    .liq-label {
+        font-size: 9px;
+        color: #94a3b8;
+        font-family: 'JetBrains Mono', monospace;
+        margin-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 4px;
+    }
+
+    .fav-active {
+        color: #F0B90B !important;
+        text-shadow: 0 0 12px rgba(240, 185, 11, 0.5);
+        animation: pulse-star 2s infinite;
+    }
+
+    @keyframes pulse-star {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    .fav-separator {
+        background: linear-gradient(90deg, transparent, rgba(240, 185, 11, 0.08), transparent);
+        border-top: 1px solid rgba(240, 185, 11, 0.25);
+        border-bottom: 1px solid rgba(240, 185, 11, 0.25);
+        color: #F0B90B;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .pnl-sub {
+        display: block;
+        font-size: 10px;
+        font-family: 'JetBrains Mono', monospace;
+        margin-top: 4px;
+        cursor: help;
+        opacity: 0.9;
+    }
+
+    .score-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-weight: 800;
+        min-width: 36px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        border: 1px solid transparent;
+        transition: var(--transition-smooth);
+        margin: 0 auto;
+    }
+
+    .score-badge:hover {
+        transform: scale(1.1);
+    }
+
+    .score-ready {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.15));
+        color: #10B981;
+        border-color: rgba(16, 185, 129, 0.5);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .score-watch {
+        background: linear-gradient(135deg, rgba(252, 213, 53, 0.2), rgba(252, 213, 53, 0.1));
+        color: #FCD535;
+        border-color: rgba(252, 213, 53, 0.4);
+        box-shadow: 0 0 15px rgba(252, 213, 53, 0.2);
+    }
+
+    .score-lowqual {
+        background: rgba(100, 116, 139, 0.15);
+        color: #64748b;
+        border-color: #475569;
+        opacity: 0.65;
+    }
+
+    .score-badge.score-observe {
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        border: 1px dashed #cbd5e1;
+    }
+
+    .timer-badge {
+        font-size: 9px;
+        color: #666;
+        font-family: monospace;
+        margin-top: 1px;
+    }
+
+    .timer-badge.stable {
+        color: #10B981;
+        font-weight: bold;
+    }
+
+    .badge-inst {
+        display: inline-block;
+        background: #22c55e;
+        color: #022c22;
+        font-size: 8px;
+        font-weight: 800;
+        padding: 1px 3px;
+        border-radius: 3px;
+        margin-left: 4px;
+        vertical-align: middle;
+        letter-spacing: 0.5px;
+    }
+
+    @keyframes pulse-red {
+        0% {
+            box-shadow: 0 0 0 0 rgba(246, 70, 93, 0.4);
+        }
+
+        70% {
+            box-shadow: 0 0 0 4px rgba(246, 70, 93, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(246, 70, 93, 0);
+        }
+    }
+
+    [data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #0f172a;
+        color: white;
+        padding: 4px 8px;
+        font-size: 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        border: 1px solid #334155;
+        z-index: 100;
+        margin-bottom: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        backdrop-filter: blur(2px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .score-modal {
+        background: #1e293b;
+        width: 340px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .score-modal-header {
+        background: #0f172a;
+        padding: 10px 15px;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .score-modal-body {
+        padding: 15px;
+        font-size: 12px;
+    }
+
+    .score-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .score-val {
+        font-family: monospace;
+        font-weight: bold;
+    }
+
+    .score-plus {
+        color: #10B981;
+    }
+
+    .score-minus {
+        color: #F6465D;
+    }
+
+    .score-section-title {
+        font-size: 10px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 2px;
+    }
+
+    /* [BUG-02] CSS para botão desabilitado */
+    .btn-action.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div id="scoreModalOverlay" class="modal-overlay" onclick="closeScoreModal(event)">
+    <div class="score-modal">
+        <div class="score-modal-header">
+            <span>Intelligence Breakdown (F4)</span>
+            <i class="fa-solid fa-xmark" onclick="closeScoreModal()" style="cursor:pointer; color:#888;"></i>
+        </div>
+        <div class="score-modal-body" id="scoreModalContent"></div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-val text-green">
+        <span id="sys-status">● Sistema Online -</span>
+        <span style="color:#FFFFFF; font-weight:300; margin-left: 1px; font-size:12px;">Última atualização: </span>
+        <span style="font-size:10px; color:#F0B90B; margin-left:2px;" id="last-update">--:--:--</span>
+    </div>
+</div>
+
+<div class="toolbar">
+
+    <div class="tool-header">
+        <div>
+            <div class="stat-val2 text-green">Oportunidades</div>
+            <div style="font-size: 12px; color: #888;">
+                <span id="opp-count" style="color:#FFFFFF; font-weight:700;">0</span> pares ativos
+            </div>
+        </div>
+        <div class="right-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass" style="font-size:11px; color:#888"></i>
+                <input type="text" id="globalSearch" placeholder="Ativo..." onkeyup="window.render()">
+            </div>
+
+            <button id="btnFiltros" class="btn-filter-toggle" onclick="toggleFilters()" title="Filtros de Mercado">
+                <i class="fa-solid fa-filter"></i> Filtros
+            </button>
+
+            <button id="btnConfig" class="btn-action" onclick="toggleConfig()" title="Configurações de Regra">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+
+            <button id="btnPause" class="btn-action" onclick="togglePause()"><i class="fa-solid fa-pause"></i></button>
+            <button class="btn-action" onclick="resetFilters()"><i class="fa-solid fa-rotate-left"></i></button>
+        </div>
+    </div>
+
+    <div id="dashboard-container" class="dashboard-panel"
+        style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); display: none;">
+    </div>
+
+    <div id="filterSummaryBar" class="filter-summary-bar">
+        Carregando filtros...
+    </div>
+
+    <div id="filterPanel" class="filter-expanded-area" style="display: none;">
+        <div class="filter-grid">
+            <div class="filter-col">
+                <h4>Configuração de Qualidade</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <div class="input-group">
+                        <label>Spread Min (%):</label>
+                        <input type="number" id="confMinSpread" class="filter-input" step="0.1" value="0.2">
+                    </div>
+                    <div class="input-group">
+                        <label>Score Mínimo:</label>
+                        <input type="number" id="confMinScore" class="filter-input" step="10" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Persistência (min):</label>
+                        <input type="number" id="confMinPersist" class="filter-input" step="1" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Vol 24h Min ($):</label>
+                        <input type="number" id="confMinVol" class="filter-input" value="50000" step="10000">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top:8px;">
+                    <label>Perfil:</label>
+                    <div class="profile-btns">
+                        <button class="btn-profile prof-green" onclick="setProfile('conservador')">Conservador</button>
+                        <button class="btn-profile prof-yellow" onclick="setProfile('moderado')">Moderado</button>
+                        <button class="btn-profile prof-red" onclick="setProfile('agressivo')">Agressivo</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-col">
+                <h4>Corretoras & Filtros</h4>
+                <div class="input-group">
+                    <label style="font-size:10px; color:#888;">Compra (Spot):</label>
+                    <div class="exch-list" id="spotListConfig">
+                        <div class="exch-check" onclick="toggleCheck(this, 'spot', 'mexc')" data-val="mexc"><img
+                                src="https://assets.coincap.io/assets/icons/mxc@2x.png"> MEXC</div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'spot', 'gate')" data-val="gate"><img
+                                src="https://assets.coincap.io/assets/icons/gate@2x.png"> Gate</div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'spot', 'bitget')" data-val="bitget"><img
+                                src="https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png"> Bitget</div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'spot', 'bingx')" data-val="bingx"><img
+                                src="https://s2.coinmarketcap.com/static/img/exchanges/64x64/1247.png"> BingX</div>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top:8px;">
+                    <label style="font-size:10px; color:#888;">Venda (Futuros):</label>
+                    <div class="exch-list" id="futListConfig">
+                        <div class="exch-check" onclick="toggleCheck(this, 'fut', 'mexc_futures')"
+                            data-val="mexc_futures"><img src="https://assets.coincap.io/assets/icons/mxc@2x.png"> MEXC
+                        </div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'fut', 'gate_futures')"
+                            data-val="gate_futures"><img src="https://assets.coincap.io/assets/icons/gate@2x.png"> Gate
+                        </div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'fut', 'bitget_futures')"
+                            data-val="bitget_futures"><img
+                                src="https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png"> Bitget</div>
+                        <div class="exch-check" onclick="toggleCheck(this, 'fut', 'bingx_futures')"
+                            data-val="bingx_futures"><img
+                                src="https://s2.coinmarketcap.com/static/img/exchanges/64x64/1247.png"> BingX</div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.1); padding-top:8px;">
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        <div style="font-size:10px; display:flex; align-items:center; gap:4px;">
+                            <input type="checkbox" id="chkBlocked" checked> Ocultar Inválidos
+                        </div>
+                        <div style="font-size:10px; display:flex; align-items:center; gap:4px;">
+                            <input type="checkbox" id="chkCross" checked> Cross
+                        </div>
+                        <div style="font-size:10px; display:flex; align-items:center; gap:4px;">
+                            <input type="checkbox" id="chkSame" checked> Same
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-col">
+                <h4>Moedas Bloqueadas</h4>
+                <div id="blockedListContainer" class="blocked-list-container">
+                    <span style="color:#666; font-size:10px;">Nenhuma bloqueada.</span>
+                </div>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-cancel" onclick="toggleFilters()">Fechar</button>
+            <button class="btn-apply" onclick="applyFilters()">Aplicar Filtros</button>
+        </div>
+    </div>
+
+    <div id="configPanel" class="filter-expanded-area" style="display: none;">
+        <div class="config-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+            <div class="filter-col">
+                <h4 style="color:#F0B90B; border-bottom-color:#F0B90B;"><i class="fa-solid fa-wallet"></i> Configurar
+                    Capacity</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="input-group">
+                        <label style="color:#fff; font-weight:bold;">Minha Banca ($)</label>
+                        <input type="number" id="confBankroll" class="filter-input"
+                            style="border-color:#F0B90B; font-weight:bold;" placeholder="2000" min="100">
+                    </div>
+                    <div class="input-group">
+                        <label style="color:#3b82f6; font-weight:bold;">Hedge (%)</label>
+                        <input type="number" id="confHedgePct" class="filter-input"
+                            style="border-color:#3b82f6; font-weight:bold;" placeholder="50" min="0" max="100" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label style="color:#0ecb81; font-weight:bold;">Mínimo por Operação ($)</label>
+                        <input type="number" id="confEntryMin" class="filter-input" placeholder="200" min="50">
+                    </div>
+                    <div class="input-group">
+                        <label style="color:#0ecb81; font-weight:bold;">Máximo por Operação ($)</label>
+                        <input type="number" id="confEntryMax" class="filter-input" placeholder="500" min="100">
+                    </div>
+                </div>
+                <div id="capacitySummary" style="font-size:10px; color:#888; margin-top:5px; font-style:italic;">
+                    LegBudget: $500 | Min/Max: $200/$500
+                </div>
+            </div>
+
+            <div class="filter-col">
+                <h4 style="color:#3b82f6; border-bottom-color:#3b82f6;"><i class="fa-solid fa-chart-pie"></i>
+                    Diagnóstico de Execução</h4>
+                <div id="execution-stats"
+                    style="height: 100px; display: flex; flex-direction: column; justify-content: center; gap: 5px;">
+                    <span style="color:#666; font-size:10px; text-align:center;">Aguardando dados do feed...</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="filter-actions">
+            <button class="btn-cancel" onclick="toggleConfig()">Fechar</button>
+            <button class="btn-apply" onclick="applyFilters()">Salvar Configuração</button>
+        </div>
+    </div>
+
+</div>
+<div class="sort-indicator" id="sortIndicator">
+    Ordenado por: <span id="sortIndicatorKey" class="sort-indicator-key">Score</span> (<span
+        id="sortIndicatorDir">decrescente</span>)
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th class="sortable active-sort" data-key="score" onclick="handleSort('score')"><span
+                        class="th-label">Score</span><span class="sort-arrow">▼</span></th>
+                <th class="sortable" data-key="symbol" onclick="handleSort('symbol')"><span
+                        class="th-label">Ativo</span><span class="sort-arrow">↕</span></th>
+                <th class="sortable" data-key="spread" onclick="handleSort('spread')"><span
+                        class="th-label">Spread</span><span class="sort-arrow">↕</span></th>
+                <th class="sortable" data-key="volume" onclick="handleSort('volume')"><span class="th-label">Volume
+                        24h</span><span class="sort-arrow">↕</span></th>
+                <th class="sortable" data-key="capacity" onclick="handleSort('capacity')"><span
+                        class="th-label">Lucro/ROI</span><span class="sort-arrow">↕</span></th>
+                <th><span class="th-label">Exchanges</span></th>
+                <th><span class="th-label">Preço</span></th>
+                <th><span class="th-label">Funding</span></th>
+                <th><span class="th-label">Faixa Preço</span></th>
+                <th><span class="th-label">Nº Ordens</span></th>
+                <th class="sortable" data-key="status" onclick="handleSort('status')"><span
+                        class="th-label">Status</span><span class="sort-arrow">↕</span></th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<div style="height: 50px;"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // =========================================================================
+    // FRONTEND VERSION: V112 (Security Hardening + UX Fix)
+    // Base: V111
+    // Changelog:
+    //  - FIX: Strict hostname whitelist (ALLOWED_HOSTNAMES sem endsWith).
+    //  - FIX: Unified URL validation (window.validateUrl global).
+    //  - FIX: Proper disabled button behavior (CSS + onclick removido).
+    //  - FIX: Spread sign rendering (+ para positivo, - para negativo).
+    //  - FIX: Removed duplicate Hedge sync em syncUI.
+    //  - KEEPS: Telemetria Real, Zero-Hedge, Max Real do Backend.
+    // =========================================================================
+
+    // 0. DEBUG
+    window.DEBUG_TAGS = false;
+    window.auditTags = function (needle = '') { return []; };
+
+    // 1. STATE
+    let ws = null, wsEpoch = 0, wsReconnectTimer = null;
+    let data = [], lastMeta = null, paused = false, dataMap = {};
+    const KEYS = { FILTERS: 'arb:filters:v109', FAVS: 'arb:favs:context:v1' };
+    const STABLES = new Set(['USDT', 'USDC', 'TUSD', 'BUSD', 'FDUSD', 'USDD', 'SUSD', 'USDP', 'DAI', 'EUR', 'GBP']);
+    const AVOID_TAGS = new Set(['INVALID_PRICE_SCALE', 'ABSURD_SPREAD', 'POST_MULT_RATIO_FAIL', 'DEPTH_NO_TOP_LIQ', 'DEPTH_SANITY_FAIL', 'DEPTH_CALC_ERROR']);
+
+    const DEFAULT_FILTERS = {
+        minSpread: 0.2, minScore: 0, minVol: 50000, minPersist: 0,
+        // [V114] Capacity Configuration
+        bankrollUsd: 2000,
+        hedgePct: 50,  // % (0-100)
+        entryMinUsd: 200,  // mínimo por operação/perna
+        entryMaxUsd: 500,  // máximo por operação/perna (calculado como LegBudget)
+        hideBlocked: true, allowCross: true, allowSame: true,
+        spots: ['mexc', 'gate', 'bitget', 'bingx'],
+        futs: ['mexc_futures', 'gate_futures', 'bitget_futures', 'bingx_futures'],
+        blockedCoins: []
+    };
+
+    let activeFilters = { ...DEFAULT_FILTERS };
+    let sortConfig = { key: 'score', dir: 'desc' };
+    let favs = [];
+
+    // 2. TAGS SYSTEM
+    const TAG_CATALOG = {
+        INVALID_PRICE_SCALE: { short: 'IPSC', sev: 'trap', title: 'Escala Inválida', desc: 'Preço spot/fut fora do range plausível.' },
+        ABSURD_SPREAD: { short: 'ASPD', sev: 'trap', title: 'Spread Absurdo', desc: 'Spread > 50% ou < -50%. Dados sujos.' },
+        POST_MULT_RATIO_FAIL: { short: 'PMRF', sev: 'trap', title: 'Falha Multiplicador', desc: 'Validação de razão falhou após ajuste.' },
+        NEGATIVE_SPREAD: { short: 'NEGS', sev: 'trap', title: 'Spread Negativo', desc: 'Spread líquido abaixo de zero.' },
+        KILLED: { short: 'KILL', sev: 'trap', title: 'Killed', desc: 'Oportunidade descartada pelo pipeline.' },
+        DEPTH_NO_TOP_LIQ: { short: 'NTOP', sev: 'trap', title: 'Sem Topo Liq', desc: 'Topo do orderbook vazio ou zerado.' },
+        DEPTH_SANITY_FAIL: { short: 'DSA!', sev: 'trap', title: 'Depth Insano', desc: 'Cálculo de depth gerou valor irreal.' },
+        DEPTH_CALC_ERROR: { short: 'DERR', sev: 'trap', title: 'Erro Depth', desc: 'Exceção ao calcular profundidade.' },
+        FEE_BLOCKED: { short: 'FEE!', sev: 'warn', title: 'Taxa Bloqueia', desc: 'Spread não cobre as taxas estimadas.' },
+        THIN_DEPTH: { short: 'THIN', sev: 'warn', title: 'Depth Fino', desc: 'Liquidez insuficiente no topo do book.' },
+        NO_DEPTH_DATA: { short: 'NODP', sev: 'warn', title: 'Sem Depth', desc: 'Dados de orderbook indisponíveis.' },
+        HALF_BOOK: { short: 'HBOO', sev: 'warn', title: 'Meio Livro', desc: 'Falta bid ou ask em uma das pontas.' },
+        DEPTH_TRAP: { short: 'DTRP', sev: 'warn', title: 'Depth Trap', desc: 'Parece líquido, mas é artificial/wash.' },
+        TOP_LIQ_CLAMPED_EST: { short: 'CL_E', sev: 'warn', title: 'Liq Estimada', desc: 'Liquidez ajustada via estimativa de volume.' },
+        TOP_LIQ_CLAMPED_FROM_BOOK: { short: 'CL_B', sev: 'info', title: 'Liq Ajustada', desc: 'Liquidez do book limitada por segurança.' },
+        CROSS_VENUE: { short: 'XVEN', sev: 'info', title: 'Cross Venue', desc: 'Spot e Futuros em corretoras diferentes.' },
+        SAME_VENUE: { short: 'SVEN', sev: 'info', title: 'Same Venue', desc: 'Spot e Futuros na mesma corretora.' },
+        OBSERVATION: { short: 'OBSV', sev: 'info', title: 'Observação', desc: 'Ainda não pronto para execução.' },
+        SIM_BOOK: { short: 'SIMB', sev: 'info', title: 'Livro Simulado', desc: 'Depth estimado sinteticamente.' },
+        FUNDING_NEUTRAL: { short: 'FNEU', sev: 'info', title: 'Funding Neutro', desc: 'Taxa próxima de zero.' },
+        MULT_CAND_ACCEPTED: { short: 'M_OK', sev: 'info', title: 'Mult Aceito', desc: 'Candidato a multiplicador validado.' },
+        REAL_BOOK: { short: 'RBOO', sev: 'good', title: 'Livro Real', desc: 'Dados reais confirmados.' },
+        DEPTH_STRONG: { short: 'DSTR', sev: 'good', title: 'Depth Forte', desc: 'Liquidez robusta.' },
+        DEPTH_OK: { short: 'D_OK', sev: 'good', title: 'Depth OK', desc: 'Liquidez aceitável.' }
+    };
+
+    function parseTag(t) { const s = String(t || '').trim(); if (!s) return null; if (s.toUpperCase().startsWith('KILLED:')) return { code: 'KILLED', payload: s.slice(7).trim() }; return { code: s, payload: '' }; }
+    function tagToCssClass(tag) { return String(tag || '').trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, ''); }
+    function autoShortTag(tag) { const clean = tagToCssClass(tag); const base = clean.replace(/_/g, ''); return (base.slice(0, 4) || 'TAG').padEnd(4, 'X'); }
+
+    function getTagMeta(tag) {
+        const clean = tagToCssClass(tag);
+        if (TAG_CATALOG[clean]) return { code: clean, ...TAG_CATALOG[clean] };
+        if (clean.startsWith('MULT_')) return { code: clean, short: 'MULT', sev: 'info', title: 'Multiplicador', desc: 'Ajuste de escala aplicado.' };
+        if (clean.startsWith('CLAMPED')) return { code: clean, short: 'CLMP', sev: 'info', title: 'Clamped', desc: 'Valor limitado por segurança.' };
+        if (clean === 'KILLED') return { code: clean, short: 'KILL', sev: 'trap', title: 'Killed', desc: 'Descartado por regra interna.' };
+        let sev = 'info';
+        if (clean.includes('INVALID') || clean.includes('ABSURD') || clean.includes('FAIL') || clean.includes('TRAP')) sev = 'trap';
+        else if (clean.includes('FEE') || clean.includes('THIN') || clean.includes('NO_DEPTH') || clean.includes('WARN')) sev = 'warn';
+        else if (clean.includes('REAL') || clean.includes('STRONG') || clean.includes('SOLID') || clean.includes('OK')) sev = 'good';
+        return { code: clean, short: autoShortTag(clean), sev, title: 'Tag Genérica', desc: 'Sem descrição cadastrada.' };
+    }
+
+    function renderTags(tags) {
+        if (!tags || !Array.isArray(tags) || tags.length === 0) return "";
+        const seen = new Set(), norm = [], payloads = new Map();
+        for (const t of tags) {
+            const parsed = parseTag(t);
+            if (!parsed) continue;
+            const code = tagToCssClass(parsed.code);
+            if (!code) continue;
+            if (!seen.has(code)) { seen.add(code); norm.push(code); }
+            if (parsed.payload && !payloads.has(code)) payloads.set(code, parsed.payload);
+        }
+        const priority = { 'trap': 0, 'warn': 1, 'good': 2, 'info': 3, 'debug': 4 };
+        norm.sort((a, b) => {
+            const metaA = getTagMeta(a); const metaB = getTagMeta(b);
+            const pA = (priority[metaA.sev] !== undefined) ? priority[metaA.sev] : 99;
+            const pB = (priority[metaB.sev] !== undefined) ? priority[metaB.sev] : 99;
+            return pA - pB;
+        });
+        const MAX = 6;
+        const head = norm.slice(0, MAX);
+        const tail = norm.slice(MAX);
+        const chips = head.map(code => {
+            const meta = getTagMeta(code);
+            // [P2-03] Alinha classe CSS: usa tag-${meta.code} para corresponder ao CSS
+            const cls = `tag tag-${escHtml(meta.code)} sev-${escHtml(meta.sev)}`;
+            const extra = payloads.get(code);
+            const tooltip = extra ? `${meta.title}\n[${meta.code}]\nObs: ${meta.desc}\n\nDetalhe: ${extra}` : `${meta.title}\n[${meta.code}]\nObs: ${meta.desc}`;
+            return `<span class="${cls}" title="${escAttr(tooltip)}">${escAttr(meta.short)}</span>`;
+        }).join('');
+        if (tail.length === 0) return chips;
+        const moreTooltip = tail.map(code => { const meta = getTagMeta(code); return `${meta.short}: ${meta.title}`; }).join('\n');
+        return chips + `<span class="tag sev-info" title="${escAttr(moreTooltip)}">+${tail.length}</span>`;
+    }
+
+    // 3. ESSENTIALS
+    const safeNum = (val, def = 0) => { const n = parseFloat(val); return Number.isFinite(n) ? n : def; };
+    function toNum(v) { if (v == null) return 0; if (typeof v === 'number') return Number.isFinite(v) ? v : 0; const s = String(v).trim().replace('%', '').replace(',', '.'); const n = parseFloat(s); return Number.isFinite(n) ? n : 0; }
+    function canonBaseExchange(ex) { if (!ex) return ''; return String(ex).toLowerCase().trim().replace(/\s+/g, '').replace(/(_spot|_futures)$/g, '').replace(/^gateio$|^gate_io$/, 'gate'); }
+    function canonFuturesExchange(ex) { if (!ex) return ''; const s = String(ex).toLowerCase().trim(); return canonBaseExchange(s) + '_futures'; }
+    function safeJsonParse(raw, fallback) { try { return JSON.parse(raw); } catch (e) { return fallback; } }
+    function escAttr(s) { return String(s || '').replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    const escHtml = (s) => String(s || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    const isNear = (a, b) => Math.abs(a - b) < 0.001;
+
+    function normalizeFilters(obj) {
+        const merged = { ...DEFAULT_FILTERS, ...(obj && typeof obj === 'object' ? obj : {}) };
+        if (!Array.isArray(merged.spots)) merged.spots = [...DEFAULT_FILTERS.spots];
+        if (!Array.isArray(merged.futs)) merged.futs = [...DEFAULT_FILTERS.futs];
+        if (!Array.isArray(merged.blockedCoins)) merged.blockedCoins = [];
+
+        merged.bankrollUsd = safeNum(merged.bankrollUsd, 2000);
+        // [V109] Allow 0.0 Hedge
+        merged.hedgeFactor = Math.max(0.0, Math.min(1.0, safeNum(merged.hedgeFactor, 0.5)));
+
+        merged.capPctAggressive = Math.max(0, Math.min(1, safeNum(merged.capPctAggressive, 1.0)));
+        merged.capPctModerate = Math.max(0, Math.min(1, safeNum(merged.capPctModerate, 0.5)));
+        merged.capPctConservative = Math.max(0, Math.min(1, safeNum(merged.capPctConservative, 0.25)));
+
+        if (merged.capPctModerate > merged.capPctAggressive) merged.capPctModerate = merged.capPctAggressive;
+        if (merged.capPctConservative > merged.capPctModerate) merged.capPctConservative = merged.capPctModerate;
+
+        merged.spots = merged.spots.map(canonBaseExchange).filter(Boolean);
+        merged.futs = merged.futs.map(canonFuturesExchange).filter(Boolean);
+        merged.spots = [...new Set(merged.spots)];
+        merged.futs = [...new Set(merged.futs)];
+        merged.blockedCoins = merged.blockedCoins.filter(k => typeof k === 'string' && k.split('|').length === 3).map(k => {
+            const [base, spot, fut] = k.split('|');
+            const s = canonBaseExchange(spot);
+            const f = canonFuturesExchange(fut);
+            const b = (base || '').trim().toUpperCase();
+            if (!b || !s || !f) return null;
+            return `${b}|${s}|${f}`;
+        }).filter(Boolean);
+        merged.blockedCoins = [...new Set(merged.blockedCoins)];
+        return merged;
+    }
+
+    function initStorage() { try { let filtersRaw = localStorage.getItem(KEYS.FILTERS); if (filtersRaw) activeFilters = normalizeFilters(safeJsonParse(filtersRaw, null)); let favsRaw = localStorage.getItem(KEYS.FAVS); if (favsRaw) favs = safeJsonParse(favsRaw, []); } catch (e) { } }
+
+    function baseAssetFromSymbol(sym) { let s = String(sym || '').trim().toUpperCase().replace(/[\/\-]/g, '_').split(/[:_]/)[0]; if (STABLES.has(s)) return s; return s; }
+    function getPairKey(rawSym, spotEx, futEx) { const base = baseAssetFromSymbol(rawSym).toUpperCase(); const s = canonBaseExchange(spotEx); const f = canonFuturesExchange(futEx); return (base && s && f) ? `${base}|${s}|${f}` : ''; }
+    // [CORREÇÃO V2.2] Whitelist completa de exchanges com deep links
+    function getExchUrl(ex, rawSymbol, type) {
+        if (!ex || !rawSymbol) return '#';
+        const exn = canonBaseExchange(ex);
+        const base = baseAssetFromSymbol(rawSymbol);
+        const pair = `${base}_USDT`;
+
+        // MEXC
+        if (exn === 'mexc') {
+            return type === 'fut'
+                ? `https://www.mexc.com/futures/${pair}`
+                : `https://www.mexc.com/exchange/${pair}`;
+        }
+        // Gate.io
+        if (exn === 'gate') {
+            return type === 'fut'
+                ? `https://www.gate.io/futures/USDT/${pair}`
+                : `https://www.gate.io/trade/${pair}`;
+        }
+        // Bitget
+        if (exn === 'bitget') {
+            return type === 'fut'
+                ? `https://www.bitget.com/futures/usdt/${pair}`
+                : `https://www.bitget.com/spot/${pair}`;
+        }
+        // BingX
+        if (exn === 'bingx') {
+            return type === 'fut'
+                ? `https://bingx.com/en-us/futures/forward/${pair}`
+                : `https://bingx.com/en-us/spot/${pair}`;
+        }
+        return '#';
+    }
+
+    // [CORREÇÃO V2.2 / BUG-01] Hostnames explicitamente permitidos (sem subdomínios arbitrários)
+    const ALLOWED_HOSTNAMES = [
+        'mexc.com',
+        'www.mexc.com',
+        'gate.io',
+        'www.gate.io',
+        'bitget.com',
+        'www.bitget.com',
+        'bingx.com',
+        'www.bingx.com'
+    ];
+
+    // [CORREÇÃO V2.2 / BUG-03] Função global de validação de URL reutilizável
+    window.validateUrl = function(url) {
+        if (!url || typeof url !== 'string') return null;
+        const trimmed = url.trim();
+        if (trimmed === '#' || trimmed === '' || trimmed === 'null' || trimmed === 'undefined') return null;
+        // Verifica protocolo http/https
+        if (!/^https?:\/\//i.test(trimmed)) return null;
+        // [BUG-03] Bloqueia espaços, tabs, newlines e caracteres de controle
+        if (/[\s<>"']/.test(trimmed)) return null;
+        // Bloqueia caracteres de controle (0x00-0x1F e 0x7F)
+        if (/[\x00-\x1F\x7F]/.test(trimmed)) return null;
+        // [BUG-01] Valida hostname contra whitelist explícita (sem endsWith)
+        try {
+            const urlObj = new URL(trimmed);
+            if (!ALLOWED_HOSTNAMES.includes(urlObj.hostname)) return null;
+        } catch (e) {
+            return null;
+        }
+        return trimmed;
+    };
+    function getKey(i) { return `${i._pairKey}_${i.symbol}`; }
+
+    // -------------------------------------------------------------------------
+    // 4. CAPACITY ENGINE: V110 (ALIGNED WITH BACKEND MAX)
+    // -------------------------------------------------------------------------
+
+    // [V110] Corrigido para aceitar 0.0 (falsy)
+    function getHedgeFactor() {
+        const hf = Number(activeFilters.hedgeFactor);
+        return Number.isFinite(hf) ? hf : 0.5;
+    }
+
+    function capBankUse(bankrollUsd, maxUsd) {
+        const b = Number(bankrollUsd) || 0;
+        const m = Number(maxUsd) || 0;
+        if (b <= 0 || m <= 0) return { useUsd: 0, usePct: 0 };
+
+        const hedgeCap = b * getHedgeFactor();
+        const targetLeg = hedgeCap / 2; // Perna alvo
+
+        const usePct = (targetLeg > 0) ? (m / targetLeg) : 0;
+        const useUsd = Math.min(targetLeg, m);
+
+        return { useUsd, usePct };
+    }
+
+    function capBandByBankUse(usePct) {
+        const p = Number(usePct) || 0;
+        const tAgg = activeFilters.capPctAggressive;
+        const tMod = activeFilters.capPctModerate;
+        const tCons = activeFilters.capPctConservative;
+        if (p <= 0) return 'cap-none';
+        if (p < tCons) return 'cap-none';
+        if (p < tMod) return 'cap-min';
+        if (p < tAgg) return 'cap-med';
+        return 'cap-max';
+    }
+
+    // [V110] Aligned Logic: Uses Backend Max & Telemetry if available
+    function getLegAndMaxForDisplay(item, cap) {
+        const bankrollUsd = Number(activeFilters.bankrollUsd) || 2000;
+
+        // Perna Alvo: Preferência pelo backend
+        const hedgeCapBackend = Number(item.allocation_hedge_capacity_total) || 0;
+        const targetLeg = hedgeCapBackend > 0 ? (hedgeCapBackend / 2) : (bankrollUsd * getHedgeFactor() / 2);
+
+        // Max (Gargalo): Preferência pelo backend (Allocation Max USD)
+        const backendMax = Number(item.allocation_max_usd) || 0;
+
+        const spotTop = Number(item.spot_top_book_usd) || 0;
+        const futTop = Number(item.futures_top_book_usd) || 0;
+        const topMaxLeg = (spotTop > 0 && futTop > 0) ? Math.min(spotTop, futTop) : (spotTop || futTop || 0);
+
+        const maxLeg = (backendMax > 0) ? backendMax : topMaxLeg;
+
+        // pct = Quanto o Teto Real cobre da Perna Alvo?
+        const pct = (targetLeg > 0 && maxLeg > 0) ? (maxLeg / targetLeg) : 0;
+
+        return { leg: targetLeg, maxLeg: maxLeg, pct, hedgeCap: targetLeg * 2 };
+    }
+
+    function pctBandClass(pct) { return capBandByBankUse(pct); }
+
+    function pctColorByBand(band) {
+        if (band === 'cap-max') return '#10b981'; // Green
+        if (band === 'cap-med') return '#facc15'; // Yellow
+        if (band === 'cap-min') return '#ef4444'; // Red
+        return '#666';
+    }
+
+    function isCapacityEstimated(tags) { const arr = Array.isArray(tags) ? tags : []; const set = new Set(arr.map(t => { const p = parseTag(t); return p ? tagToCssClass(p.code) : ''; }).filter(Boolean)); return set.has('NO_DEPTH_DATA') || set.has('SIM_BOOK') || set.has('TOP_LIQ_CLAMPED_EST'); }
+
+    // [CAPACITY V110]
+    function capacityClass(item) {
+        const bankrollUsd = Number(activeFilters.bankrollUsd) || 2000;
+        const isV110 = (item.allocation_use_total_usd !== undefined) || (item.allocation_reason !== undefined) || (item.execution_decision !== undefined);
+
+        if (isV110) {
+            const useTotal = Number(item.allocation_use_total_usd) || 0;
+            const useLeg = Number(item.allocation_use_usd) || 0;
+            const maxTotal = Number(item.allocation_max_total_usd) || 0;
+
+            // [FIX V110] Prioriza a Perna Alvo do Backend para o cálculo de percentual
+            const hedgeCapBackend = Number(item.allocation_hedge_capacity_total) || 0;
+            const targetLeg = hedgeCapBackend > 0 ? (hedgeCapBackend / 2) : (bankrollUsd * getHedgeFactor() / 2);
+
+            // PctTotal aqui é % de uso real
+            const pctTotal = (targetLeg > 0) ? (useLeg / targetLeg) : 0;
+
+            let band = capBandByBankUse(pctTotal);
+            let recClass = 'ratio-ok';
+            if (item.allocation_capped) recClass = 'ratio-risk';
+
+            let label = '';
+            if (item.allocation_limiter) {
+                if (item.allocation_limiter.includes('LIQUIDITY')) label = 'LIQ';
+                else if (item.allocation_limiter.includes('PROFILE')) label = 'PERF';
+                else if (item.allocation_limiter.includes('CAPITAL')) label = 'SALDO';
+            }
+
+            return {
+                cell: band, recClass,
+                recUsd: useTotal, recLeg: useLeg, maxUsd: maxTotal,
+                bankrollUsd, capPct: pctTotal, label,
+                source: 'V110', isDual: true,
+                limiterFull: item.allocation_limiter,
+                reason: item.allocation_reason,
+                decision: item.execution_decision
+            };
+        }
+
+        // V92 FALLBACK
+        const maxUsdRaw = Number(item.depth_exec_usd);
+        const spotTop = Number(item.spot_top_book_usd) || 0;
+        const futTop = Number(item.futures_top_book_usd) || 0;
+        let maxUsd = (!maxUsdRaw || maxUsdRaw <= 0) ? Math.min(spotTop, futTop) : maxUsdRaw;
+
+        const { isKilled, isAvoid, isBlocked } = getInoperableFlags(item);
+        if (isKilled || isAvoid || isBlocked) return { cell: 'cap-inop', recClass: 'ratio-risk', recUsd: 0, maxUsd, bankrollUsd, capPct: 0, label: 'INOP', isDual: false };
+
+        const isEst = isCapacityEstimated(item.tags) || (!maxUsdRaw || maxUsdRaw <= 0);
+        const capData = capBankUse(bankrollUsd, maxUsd);
+        let band = capBandByBankUse(capData.usePct);
+        if (isEst) band = 'cap-min';
+
+        return {
+            cell: band,
+            recClass: 'ratio-ok',
+            recUsd: capData.useUsd,
+            maxUsd, bankrollUsd,
+            capPct: capData.usePct,
+            label: isEst ? 'EST' : 'TOP',
+            source: 'V92',
+            isDual: false
+        };
+    }
+
+    function getInoperableFlags(item) {
+        const tags = Array.isArray(item.tags) ? item.tags : [];
+        const statusUp = String(item.status || '').toUpperCase();
+        const riskUp = String(item.order_risk_level || '').toUpperCase();
+        const isKilled = statusUp.includes('KILLED') || tags.some(t => { const p = parseTag(t); return p && tagToCssClass(p.code) === 'KILLED'; });
+        const isAvoid = tags.some(t => { const p = parseTag(t); return p && AVOID_TAGS.has(tagToCssClass(p.code)); });
+        const isBlocked = riskUp === 'BLOCKED' || riskUp.startsWith('BLOCK');
+        return { isKilled, isAvoid, isBlocked };
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. UI HANDLERS
+    // -------------------------------------------------------------------------
+    window.renderBlockedList = function () {
+        const container = document.getElementById('blockedListContainer');
+        if (!container) return;
+        if (activeFilters.blockedCoins.length === 0) { container.innerHTML = '<span style="color:#666; font-size:10px;">Nenhuma bloqueada.</span>'; return; }
+        let html = '';
+        activeFilters.blockedCoins.forEach(key => {
+            const parts = key.split('|'); if (parts.length < 3) return;
+            const [base, spot, fut] = parts;
+            html += `<div class="blocked-tag">${base} <i class="fa-solid fa-xmark" onclick='toggleBlock(${JSON.stringify(base)}, ${JSON.stringify(spot)}, ${JSON.stringify(fut)})' title="Desbloquear"></i></div>`;
+        });
+        container.innerHTML = html;
+    };
+
+    function renderExecutionStats() {
+        const container = document.getElementById('execution-stats');
+        if (!container) return;
+        const counts = { PENDING: 0, BLOCKED: 0, HOLD: 0 };
+        const reasons = {};
+        data.forEach(i => {
+            const dec = i.execution_decision || 'HOLD';
+            if (dec === 'PENDING_EXECUTION') counts.PENDING++; else if (dec === 'REVOKED_BY_RISK') counts.BLOCKED++; else counts.HOLD++;
+            if (dec !== 'PENDING_EXECUTION') { const r = (i.allocation_reason || 'UNKNOWN').split('(')[0].trim(); reasons[r] = (reasons[r] || 0) + 1; }
+        });
+        const sortedReasons = Object.entries(reasons).sort((a, b) => b[1] - a[1]).slice(0, 3);
+        container.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><div title="Executáveis" style="color:#10B981; font-weight:bold;"><i class="fa-solid fa-check"></i> ${counts.PENDING}</div><div title="Bloqueadas" style="color:#EF4444; font-weight:bold;"><i class="fa-solid fa-ban"></i> ${counts.BLOCKED}</div><div title="Hold" style="color:#888;"><i class="fa-solid fa-clock"></i> ${counts.HOLD}</div></div><div style="font-size:9px; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px;">${sortedReasons.map(([k, v]) => `<div style="display:flex; justify-content:space-between;"><span>${k.substr(0, 18)}</span> <b style="color:#ccc">${v}</b></div>`).join('')}</div>`;
+    }
+
+    // [V110] Summary Bar Update with Hedge
+    window.updateFilterSummary = function () {
+        const bar = document.getElementById('filterSummaryBar'); if (!bar) return;
+        const s = activeFilters.minSpread, sc = activeFilters.minScore, v = activeFilters.minVol, p = activeFilters.minPersist;
+        const h = (getHedgeFactor() * 100).toFixed(0);
+
+        let profileName = "Manual", profileClass = "prof-manual";
+        if (isNear(s, 0.5) && sc === 50 && v === 200000 && p === 5) { profileName = "Conservador"; profileClass = "prof-conservador"; }
+        else if (isNear(s, 0.3) && sc === 20 && v === 100000 && p === 1) { profileName = "Moderado"; profileClass = "prof-moderado"; }
+        else if (isNear(s, 0.1) && sc === 0 && v === 50000 && p === 0) { profileName = "Agressivo"; profileClass = "prof-agressivo"; }
+
+        const spotList = activeFilters.spots.map(x => x.toUpperCase()).join(', ');
+        const futList = activeFilters.futs.map(x => x.replace('_futures', '').toUpperCase()).join(', ');
+        let exchDisplay = '';
+        if (spotList) exchDisplay += `<span style="color:#4ade80; font-weight:bold;">Spot: ${spotList}</span>`;
+        if (spotList && futList) exchDisplay += ' <span style="color:#666;">-</span> ';
+        if (futList) exchDisplay += `<span style="color:#f87171; font-weight:bold;">Futuros: ${futList}</span>`;
+        if (!spotList && !futList) exchDisplay = '<span style="color:#666;">Nenhuma selecionada</span>';
+        bar.innerHTML = `<span style="color:#F0B90B; font-weight:bold;">Filtro:</span> ${profileName} | Spread: ${s}% | Vol: $${fmtVol(v)} | Score: ${sc} | <span style="color:#3b82f6; font-weight:bold;">Hedge: ${h}%</span> | Banca: $${activeFilters.bankrollUsd} | ${exchDisplay}`;
+    };
+
+    window.toggleFilters = function () { const el = document.getElementById('filterPanel'); const cfg = document.getElementById('configPanel'); if (el) { if (cfg) cfg.style.display = 'none'; el.style.display = el.style.display === 'block' ? 'none' : 'block'; } };
+    window.toggleConfig = function () { const el = document.getElementById('configPanel'); const flt = document.getElementById('filterPanel'); if (el) { if (flt) flt.style.display = 'none'; const isShowing = el.style.display === 'block'; el.style.display = isShowing ? 'none' : 'block'; if (!isShowing) renderExecutionStats(); } };
+
+    // [FIX V107] Reset Filters Seguro (não mata localStorage)
+    window.resetFilters = function () {
+        localStorage.removeItem(KEYS.FILTERS);
+        localStorage.removeItem(KEYS.FAVS);
+        if (typeof LEGACY_KEYS !== 'undefined') {
+            [...(LEGACY_KEYS.FILTERS || []), ...(LEGACY_KEYS.FAVS || [])].forEach(k => localStorage.removeItem(k));
+        }
+        location.reload();
+    };
+
+    window.togglePause = function () { paused = !paused; document.getElementById('btnPause').innerHTML = paused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>'; };
+
+    // [V109] Apply includes Hedge Input
+    window.applyFilters = function () {
+        const elSpread = document.getElementById('confMinSpread'); const elScore = document.getElementById('confMinScore'); const elVol = document.getElementById('confMinVol'); const elPersist = document.getElementById('confMinPersist'); const elBankroll = document.getElementById('confBankroll'); const elAgg = document.getElementById('confCapAgg'); const elMod = document.getElementById('confCapMod'); const elCons = document.getElementById('confCapCons'); const elBlocked = document.getElementById('chkBlocked'); const elCross = document.getElementById('chkCross'); const elSame = document.getElementById('chkSame');
+
+        // NEW INPUT
+        const elHedge = document.getElementById('confHedgePct');
+
+        if (elSpread) activeFilters.minSpread = safeNum(elSpread.value, 0.2); if (elScore) activeFilters.minScore = safeNum(elScore.value, 0); if (elVol) activeFilters.minVol = safeNum(elVol.value, 50000); if (elPersist) activeFilters.minPersist = safeNum(elPersist.value, 0);
+        if (elBankroll) activeFilters.bankrollUsd = safeNum(elBankroll.value, 2000);
+        if (elHedge) activeFilters.hedgeFactor = safeNum(elHedge.value, 50) / 100.0; // Input 0-100 -> 0.0-1.0
+
+        // [FIX V111] SyncUI Nullish check
+        if (elAgg) activeFilters.capPctAggressive = safeNum(elAgg.value, 100) / 100.0; if (elMod) activeFilters.capPctModerate = safeNum(elMod.value, 50) / 100.0; if (elCons) activeFilters.capPctConservative = safeNum(elCons.value, 25) / 100.0;
+        if (elBlocked) activeFilters.hideBlocked = !!elBlocked.checked; if (elCross) activeFilters.allowCross = !!elCross.checked; if (elSame) activeFilters.allowSame = !!elSame.checked;
+
+        activeFilters = normalizeFilters(activeFilters); localStorage.setItem(KEYS.FILTERS, JSON.stringify(activeFilters));
+        const fp = document.getElementById('filterPanel'); const cp = document.getElementById('configPanel'); if (fp) fp.style.display = 'none'; if (cp) cp.style.display = 'none';
+        window.render(); window.updateFilterSummary();
+    };
+
+    window.setProfile = function (p) {
+        const els = { spread: document.getElementById('confMinSpread'), score: document.getElementById('confMinScore'), vol: document.getElementById('confMinVol'), persist: document.getElementById('confMinPersist') };
+        if (p === 'conservador') { if (els.spread) els.spread.value = 0.5; if (els.score) els.score.value = 50; if (els.vol) els.vol.value = 200000; if (els.persist) els.persist.value = 5; }
+        else if (p === 'moderado') { if (els.spread) els.spread.value = 0.3; if (els.score) els.score.value = 20; if (els.vol) els.vol.value = 100000; if (els.persist) els.persist.value = 1; }
+        else if (p === 'agressivo') { if (els.spread) els.spread.value = 0.1; if (els.score) els.score.value = 0; if (els.vol) els.vol.value = 50000; if (els.persist) els.persist.value = 0; }
+        window.applyFilters();
+    };
+    window.fav = function (s, se, fe) { const key = getPairKey(s, se, fe); if (!key) return; if (favs.includes(key)) favs = favs.filter(x => x !== key); else favs.push(key); localStorage.setItem(KEYS.FAVS, JSON.stringify(favs)); window.render(); };
+    window.toggleBlock = function (s, se, fe) { const key = getPairKey(s, se, fe); if (!key) return; const idx = activeFilters.blockedCoins.indexOf(key); if (idx >= 0) activeFilters.blockedCoins.splice(idx, 1); else activeFilters.blockedCoins.push(key); activeFilters.blockedCoins = [...new Set(activeFilters.blockedCoins)]; localStorage.setItem(KEYS.FILTERS, JSON.stringify(activeFilters)); window.renderBlockedList(); window.render(); };
+    // [BUG-01] openSplit com validação de URL
+    window.openSplit = function (url, side) {
+        const validUrl = window.validateUrl(url);
+        if (validUrl) {
+            window.open(encodeURI(validUrl), '_blank', `width=${Math.floor(screen.width / 2)},height=${screen.height},left=${(side === 'left' ? 0 : Math.floor(screen.width / 2))},top=0`);
+        }
+    };
+    window.handleSort = function (key) { if (sortConfig.key === key) sortConfig.dir = (sortConfig.dir === 'asc') ? 'desc' : 'asc'; else { sortConfig.key = key; sortConfig.dir = 'desc'; } if (window.updateSortUI) window.updateSortUI(); if (window.render) window.render(); };
+    window.showScoreDetails = function (k) { const i = dataMap[k]; if (i) console.log(i); };
+    // [P1-01] Modal só fecha ao clicar no overlay, não no conteúdo
+    window.closeScoreModal = function (event) {
+        if (event && event.target && event.target.id === 'scoreModalOverlay') {
+            document.getElementById('scoreModalOverlay').style.display = 'none';
+        }
+    };
+    window.toggleCheck = function (el, type, val) { el.classList.toggle('checked'); const clean = (type === 'spot') ? canonBaseExchange(val) : canonFuturesExchange(val); if (type === 'spot') { if (el.classList.contains('checked')) { if (!activeFilters.spots.includes(clean)) activeFilters.spots.push(clean); } else { activeFilters.spots = activeFilters.spots.filter(x => x !== clean); } } else { if (el.classList.contains('checked')) { if (!activeFilters.futs.includes(clean)) activeFilters.futs.push(clean); } else { activeFilters.futs = activeFilters.futs.filter(x => x !== clean); } } activeFilters = normalizeFilters(activeFilters); localStorage.setItem(KEYS.FILTERS, JSON.stringify(activeFilters)); window.updateFilterSummary(); if (window.connectWS) window.connectWS(); if (window.render) window.render(); };
+
+    // -------------------------------------------------------------------------
+    // 6. RENDERIZADORES
+    // -------------------------------------------------------------------------
+    const fmtVol = (x) => { const n = Number(x); if (!Number.isFinite(n)) return '0'; if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M'; if (n >= 1e3) return (n / 1e3).toFixed(0) + 'k'; return n.toFixed(0); };
+    const fmtPrice = (n) => { const val = parseFloat(n); if (!Number.isFinite(val)) return '0.00'; return val.toFixed(6).replace(/\.?0+$/, ""); };
+    const getLiquidityClass = (v) => { const n = Number(v); if (!Number.isFinite(n) || n <= 0) return 'liq-unknown'; if (n < 50000) return 'liq-low-warning'; if (n > 500000) return 'liq-ok'; return ''; };
+    const liqLabelClass = (v) => { const n = Number(v); if (n <= 0) return ''; if (n < 5000) return 'liq-low-warning'; if (n > 50000) return 'liq-ok'; return ''; };
+
+    // [MODIFICADO: ROBUST ALIASES + V110 + REASONS]
+    function flattenOpportunity(op) {
+        const exSpotRaw = op.exchange_spot ?? op.exchanges?.spot ?? '';
+        const exFutRaw = op.exchange_futures ?? op.exchanges?.futures ?? '';
+        const status = op.status ?? 'UNKNOWN';
+        const spreadNet = toNum(op.spread_net_pct ?? op.spread?.net_pct);
+        const qual = op.quality_level || ((String(status).toUpperCase() === 'ACTIVE' && spreadNet > 0.5) ? 'READY' : 'WATCH');
+
+        // [FIX V107] Robust Top Book Aliases
+        const spotTop = toNum(op.spot_top_book_usd ?? op.spotTopBookUsd ?? op.liquidity?.spot_top_book_usd ?? op.spot?.top_usd);
+        const futTop = toNum(op.futures_top_book_usd ?? op.futuresTopBookUsd ?? op.liquidity?.futures_top_book_usd ?? op.futures?.top_usd);
+
+        return {
+            ...op,
+            exchange_spot: canonBaseExchange(exSpotRaw),
+            exchange_futures: canonFuturesExchange(exFutRaw),
+            spread_net_pct: spreadNet,
+            spread_exec_pct: toNum(op.spread_exec_pct ?? op.spread_pct),
+            score: toNum(op.score ?? op.score?.raw),
+            volume_24h_usd: toNum(op.volume_24h_usd ?? op.volume?.usd_24h),
+            spot_top_book_usd: spotTop,
+            futures_top_book_usd: futTop,
+            top_liquidity_usd: toNum(op.top_liquidity_usd ?? op.liquidity?.top_usd),
+            price_spot: toNum(op.price_spot ?? op.spot_price ?? op.prices?.spot),
+            price_futures: toNum(op.price_futures ?? op.futures_price ?? op.prices?.futures),
+            status: status,
+            quality_level: qual,
+            order_risk_level: op.order_risk_level ?? 'UNKNOWN',
+            tags: Array.isArray(op.tags) ? op.tags : [],
+
+            // [V110 MAP - TELEMETRIA COMPLETA]
+            allocation_use_total_usd: safeNum(op.allocation_use_total_usd),
+            allocation_use_usd: safeNum(op.allocation_use_usd),
+            allocation_max_total_usd: safeNum(op.allocation_max_total_usd),
+            allocation_max_usd: safeNum(op.allocation_max_usd), // [FIX V110]
+            allocation_hedge_capacity_total: safeNum(op.allocation_hedge_capacity_total), // [FIX V110]
+            allocation_hedge_factor: safeNum(op.allocation_hedge_factor), // [FIX V110]
+            allocation_limiter: op.allocation_limiter,
+            allocation_capped: op.allocation_capped,
+            allocation_reason: op.allocation_reason,
+            execution_decision: op.execution_decision,
+
+            // [V113] Novos campos para Funding, Faixa de Preço e Nº de Ordens
+            funding_rate: toNum(op.funding_rate ?? op.funding?.rate ?? op.funding_rate_pct),
+            funding_interval_hours: op.funding_interval_hours ?? op.funding?.interval_hours ?? 8,
+            next_funding_at: op.next_funding_at ?? op.funding?.next_at,
+
+            range_low: toNum(op.range_low ?? op.price_range?.low ?? op.range?.low),
+            range_high: toNum(op.range_high ?? op.price_range?.high ?? op.range?.high),
+            range_basis: op.range_basis ?? op.price_range?.basis ?? '—',
+            range_pct: toNum(op.range_pct ?? op.price_range?.pct),
+
+            orders_to_fill_spot: toNum(op.orders_to_fill_spot ?? op.fill?.orders_spot ?? op.orders?.spot),
+            orders_to_fill_fut: toNum(op.orders_to_fill_fut ?? op.fill?.orders_fut ?? op.orders?.fut),
+            orders_to_fill_total: toNum(op.orders_to_fill_total ?? op.fill?.orders_total ?? (op.orders_to_fill_spot + op.orders_to_fill_fut)),
+            fill_status: op.fill_status ?? op.fill?.status ?? 'OK'
+        };
+    }
+
+    function checkExchanges(i) { return activeFilters.spots.includes(i.exchange_spot) && activeFilters.futs.includes(i.exchange_futures); }
+
+    // [LOCKED: V92 PnL Logic]
+    function calcPnlDiffUsd(item) {
+        try {
+            if (!item) return { text: '', color: '' };
+            const s = parseFloat(item.price_spot || 0);
+            const f = parseFloat(item.price_futures || 0);
+            if (s <= 0 || f <= 0) return { text: '--', color: '#666' };
+            const pnl = f - s;
+            const pnlStr = pnl.toFixed(6).replace(/\.?0+$/, "") || "0";
+            const pnlColor = pnl >= 0 ? '#4ade80' : '#f87171';
+            return { text: `${pnl > 0 ? '+' : ''}${pnlStr}`, color: pnlColor, detail: `Fut: ${f}\nSpot: ${s}\nDif: ${pnl.toFixed(8)}` };
+        } catch (e) { return { text: 'ERR', color: '#666' }; }
+    }
+
+    function renderOperationalState(item) {
+        const { isKilled, isAvoid, isBlocked } = getInoperableFlags(item);
+        if (isKilled) return `<span class="state-avoid" style="background:#7f1d1d;" data-tooltip="KILLED">KILLED</span>`;
+        if (isBlocked) return `<span class="state-avoid" data-tooltip="BLOCKED">BLOCKED</span>`;
+        if (isAvoid) return `<span class="state-avoid" data-tooltip="AVOID">AVOID</span>`;
+        if (String(item.status).toUpperCase() === 'OBSERVATION_ONLY') return `<span class="state-watch" data-tooltip="OBSERVE">OBSERVE</span>`;
+        if (item.quality_level === 'READY' || String(item.status).toUpperCase() === 'ACTIVE') return `<span class="state-ready" data-tooltip="READY">READY</span>`;
+        return `<span class="state-watch">WATCH</span>`;
+    }
+
+    function renderConfBig(item) { const success = item.spread_success_rate || 0; let color = success >= 60 ? '#10B981' : (success >= 30 ? '#FCD535' : '#F6465D'); return `<span style="color:${color}; font-family:monospace; font-weight:bold; font-size:12px;">${success.toFixed(0)}%</span>`; }
+
+    // [REFATORADO V2: Nova estrutura de colunas conforme especificação]
+    function getRowHTML(i) {
+        if (!i.symbol) return "";
+        let pairKey = i._pairKey; if (!pairKey) { pairKey = getPairKey(i.symbol, i.exchange_spot, i.exchange_futures); if (!pairKey) return ""; i._pairKey = pairKey; }
+        const uniqueKey = getKey(i);
+
+        // Asset Column Prep
+        const symBase = baseAssetFromSymbol(i.symbol);
+        const BTC_ICON = 'https://assets.coincap.io/assets/icons/btc@2x.png';
+        const displayName = symBase ? `${symBase}/USDT` : String(i.symbol || 'UNKNOWN');
+        const icon = symBase ? `https://assets.coincap.io/assets/icons/${symBase.toLowerCase()}@2x.png` : BTC_ICON;
+        const urlBuy = getExchUrl(i.exchange_spot, i.symbol, 'spot');
+        const urlSell = getExchUrl(i.exchange_futures, i.symbol, 'fut');
+        const score = typeof i.score === "number" ? i.score : 0;
+        const spreadNet = i.spread_net_pct || 0;
+        const spreadExec = i.spread_exec_pct || 0;
+        const spotTopUsd = i.spot_top_book_usd || 0;
+        const futTopUsd = i.futures_top_book_usd || 0;
+
+        const cap = capacityClass(i);
+        const pnlData = calcPnlDiffUsd(i);
+
+        let scoreClass = (i.quality_level === 'READY' || String(i.status).toUpperCase() === 'ACTIVE') ? 'score-ready' : 'score-lowqual';
+        const { isKilled, isAvoid, isBlocked } = getInoperableFlags(i);
+        const tags = Array.isArray(i.tags) ? [...i.tags] : [];
+        if (isKilled) {
+            const hasKilledAny = tags.some(t => { const p = parseTag(t); return p && tagToCssClass(p.code) === 'KILLED'; });
+            if (!hasKilledAny) tags.unshift('KILLED');
+        }
+        const subTitleHtml = `<div class="tag-grid">${renderTags(tags)}</div>`;
+
+        // Lucro/ROI consolidado (absorve Capacity)
+        const capMetrics = getLegAndMaxForDisplay(i, cap);
+        const bandPct = pctBandClass(capMetrics.pct);
+        const pctColor = pctColorByBand(bandPct);
+
+        const rawPct = capMetrics.pct * 100;
+        const displayPct = Math.min(rawPct, 100).toFixed(2).replace('.', ',') + '%';
+        const pctText = (capMetrics.pct > 0) ? displayPct : '--';
+
+        const isRisk = isKilled || isBlocked || isAvoid || (cap.isDual && cap.decision === 'REVOKED_BY_RISK');
+        const header = isRisk ? 'INOP' : ((cap.isDual && cap.decision && cap.decision !== 'PENDING_EXECUTION') ? 'HOLD' : '');
+        const headerColor = isRisk ? '#ef4444' : '#FCD535';
+        const headerHtml = header ? `<div style="font-weight:800; font-size:10px; color:${headerColor}; margin-bottom:2px;">${header}</div>` : '';
+
+        // [P2-01] Separar visualmente Capacidade e ROI
+        const roiValue = spreadNet.toFixed(2);
+        const profitUsd = cap.recUsd > 0 ? cap.recUsd : 0;
+        const profitText = profitUsd > 0 ? `$${profitUsd.toFixed(2)}` : '--';
+        const profitChange = profitUsd > 0 ? `+$${(profitUsd * 0.075).toFixed(2)}` : '+$0.00'; // Estimativa de variação
+
+        // [V114] Lucro/ROI com capacity_pct e profit_usd do backend
+        const capacityPct = Number(i.capacity_pct) || 0;
+        const profitUsdBackend = Number(i.profit_usd) || 0;
+        const roiNetPct = Number(i.roi_net_pct) || 0;
+        const capacityBand = i.capacity_band || 'RED';
+        const capacityReason = i.capacity_reason || 'NO_DEPTH';
+        const entryLegUsd = Number(i.entry_leg_usd) || 0;
+
+        // Cores por banda de capacidade
+        const capacityColor = capacityBand === 'GREEN' ? '#0ecb81' :
+                              capacityBand === 'YELLOW' ? '#FCD535' : '#F6465D';
+
+        // Formato novo: Linha 1 = ROI Net%, Linha 2 = Capacity% (+$profit)
+        const roiText = roiNetPct > 0 ? `+${roiNetPct.toFixed(2)}%` : `${roiNetPct.toFixed(2)}%`;
+        const roiColor = roiNetPct > 0 ? '#0ecb81' : (roiNetPct < 0 ? '#F6465D' : '#888');
+        const capacityText = `${(capacityPct * 100).toFixed(0)}%`;
+        const profitDisplay = profitUsdBackend > 0 ? `(+$${profitUsdBackend.toFixed(2)})` : '($0.00)';
+
+        // Tooltip Raio-X do ROI
+        let profitTooltip = `ROI Net: ${roiText}\n`;
+        profitTooltip += `Capacity: ${capacityText} ${profitDisplay}\n`;
+        profitTooltip += `Capital Recomendado: $${fmtVol(entryLegUsd)}/perna\n`;
+        profitTooltip += `Limitador: ${capacityReason}\n`;
+        profitTooltip += `Banca: $${i.bankroll_usd || 2000} | Hedge: ${i.hedge_pct || 50}%`;
+
+        const profitStyle = isRisk ? 'opacity:0.5;' : '';
+        const profitInnerHtml = `
+          <div style="${profitStyle} line-height: 1.3;">
+            ${headerHtml}
+            <div style="font-size:13px; color:${roiColor}; font-weight:600;">${roiText}</div>
+            <div style="font-size:12px; color:${capacityColor}; font-weight:500;">${capacityText} <span style="font-size:11px; color:#888;">${profitDisplay}</span></div>
+          </div>
+        `;
+
+        const starClass = favs.includes(pairKey) ? "fa-solid fa-star fav-active" : "fa-regular fa-star";
+        const exchName = (n) => n.replace('_futures', '').toUpperCase();
+
+        // [V113] Taxa de Funding com tratamento robusto (formato do print)
+        const fundingRate = Number(i.funding_rate);
+        const hasFunding = Number.isFinite(fundingRate) && fundingRate !== 0;
+        const fundingRatePct = hasFunding ? (fundingRate * 100) : 0;
+        const fundingTextDisplay = hasFunding
+            ? `${fundingRatePct.toFixed(3)}%`
+            : (Number.isFinite(fundingRate) && fundingRate === 0 ? '0.000%' : '—');
+        const fundingColor = fundingRate > 0 ? '#0ecb81' : (fundingRate < 0 ? '#F6465D' : '#888');
+
+        // Calcular tempo até próximo funding (formato: 14 52m)
+        const fundingInterval = i.funding_interval_hours || 8;
+        const nextFundingAt = i.next_funding_at;
+        let fundingTimeText = '';
+        if (nextFundingAt) {
+            const now = Date.now();
+            const nextTime = new Date(nextFundingAt * 1000).getTime();
+            const diffMs = nextTime - now;
+            if (diffMs > 0) {
+                const diffH = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffM = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                fundingTimeText = `${diffH}h ${diffM}m`;
+            } else {
+                fundingTimeText = '0h 0m';
+            }
+        } else {
+            // Fallback: assumir próximo funding em intervalo regular
+            fundingTimeText = `${fundingInterval}h`;
+        }
+
+        const fundingTooltip = hasFunding
+            ? `Funding: ${fundingRatePct.toFixed(4)}%\nIntervalo: ${fundingInterval}h${nextFundingAt ? '\nPróximo: ' + fundingTimeText : ''}`
+            : 'Taxa de funding não disponível';
+
+        // [V114] Faixa de Preço Real (sweep execution)
+        const spotPxStart = Number(i.spot_px_start);
+        const spotPxLimit = Number(i.spot_px_limit);
+        const futPxStart = Number(i.fut_px_start);
+        const futPxLimit = Number(i.fut_px_limit);
+        const hasSweepData = Number.isFinite(spotPxStart) && Number.isFinite(spotPxLimit) && spotPxStart > 0 && spotPxLimit > 0;
+
+        // Formato: Comprar spot_start - spot_limit / Vender fut_start - fut_limit
+        const rangeSpotText = hasSweepData ? `${spotPxStart.toFixed(5)} - ${spotPxLimit.toFixed(5)}` : '—';
+        const rangeFutText = hasSweepData ? `${futPxStart.toFixed(5)} - ${futPxLimit.toFixed(5)}` : '—';
+        const rangeTooltip = hasSweepData
+            ? `Execução Sweep:\nComprar: ${spotPxStart.toFixed(8)} → ${spotPxLimit.toFixed(8)} (${i.orders_to_fill_spot || 0} níveis)\nVender: ${futPxStart.toFixed(8)} → ${futPxLimit.toFixed(8)} (${i.orders_to_fill_fut || 0} níveis)\nCapital: $${fmtVol(i.entry_leg_usd || 0)}`
+            : 'Dados de execução não disponíveis';
+
+        // [V114] Nº de Ordens com cores por risco
+        const ordersSpot = Number(i.orders_to_fill_spot);
+        const ordersFut = Number(i.orders_to_fill_fut);
+        const hasOrdersSpot = Number.isFinite(ordersSpot);
+        const hasOrdersFut = Number.isFinite(ordersFut);
+        const ordersSpotText = hasOrdersSpot ? ordersSpot.toString() : '—';
+        const ordersFutText = hasOrdersFut ? ordersFut.toString() : '—';
+        const ordersTotal = hasOrdersSpot && hasOrdersFut ? ordersSpot + ordersFut : null;
+        const fillStatus = i.fill_status || 'OK';
+
+        // Cores por risco: 1-2 = verde/cinza (seguro), 3-5 = amarelo (moderado), 6+ = vermelho (alto)
+        function getRiskColor(orders) {
+            if (orders <= 2) return '#0ecb81'; // Seguro - verde
+            if (orders <= 5) return '#FCD535'; // Moderado - amarelo
+            return '#F6465D'; // Alto risco - vermelho
+        }
+
+        const ordersSpotColor = hasOrdersSpot ? getRiskColor(ordersSpot) : '#888';
+        const ordersFutColor = hasOrdersFut ? getRiskColor(ordersFut) : '#888';
+
+        // Status override para fill_status não-OK
+        const finalOrdersColor = fillStatus === 'OK' ? null : '#F6465D';
+
+        const ordersTooltip = hasOrdersSpot || hasOrdersFut
+            ? `Spot: ${ordersSpotText} níveis | Fut: ${ordersFutText} níveis${ordersTotal !== null ? '\nTotal: ' + ordersTotal + ' níveis' : ''}${fillStatus !== 'OK' ? '\nStatus: ' + fillStatus : ''}\n\nRisco:\n1-2 níveis = Seguro\n3-5 níveis = Moderado\n6+ níveis = Alto`
+            : 'Dados de ordens não disponíveis';
+
+        // [BUG-02/03] Verifica se exchanges são suportadas usando validação unificada
+        const buySupported = window.validateUrl(urlBuy) !== null;
+        const sellSupported = window.validateUrl(urlSell) !== null;
+        const openExchDisabled = (!buySupported && !sellSupported) ? 'disabled="disabled"' : '';
+        const openExchClass = (!buySupported && !sellSupported) ? 'btn-action disabled' : 'btn-action';
+        const openExchTitle = (!buySupported && !sellSupported) ? 'Exchange não suportada' : 'Abrir Exchanges';
+        // [BUG-02] Remove onclick completamente quando inválido
+        const openExchOnClick = (!buySupported && !sellSupported) ? '' : `onclick='openExchangeWindows(${JSON.stringify(urlBuy)}, ${JSON.stringify(urlSell)})'`;
+
+        // [BUG-05] Spread com sinal correto e cor dinâmica
+        const spreadText = spreadExec > 0
+            ? `+${spreadExec.toFixed(2)}%`
+            : `${spreadExec.toFixed(2)}%`;
+        const spreadColor = spreadExec > 0 ? '#4ade80' : (spreadExec < 0 ? '#f87171' : '#888');
+
+        return `
+        <tr class="hover:bg-gray-750 transition-colors" data-key="${escAttr(uniqueKey)}">
+            <td><div class="score-badge ${scoreClass}" onclick='showScoreDetails(${JSON.stringify(uniqueKey)})'>${score.toFixed(0)}</div></td>
+            <td>
+                <div style="display:flex; align-items:center; justify-content: flex-start; padding-left: 24px; gap:8px;">
+                    <img src="${escHtml(icon)}" class="coin-icon" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain;" onerror="this.onerror=null; this.src='${BTC_ICON}';">
+                    <div style="text-align: left; min-width: 74px;">
+                        <div style="font-weight:700; line-height: 1.2;">${escHtml(displayName)}</div>
+                        ${subTitleHtml}
+                    </div>
+                </div>
+            </td>
+            <td><span style="font-weight:bold; color:${spreadColor};">${escHtml(spreadText)}</span></td>
+            <td class="vol-highlight ${getLiquidityClass(i.volume_24h_usd)}" style="font-size:12px;">$${fmtVol(i.volume_24h_usd)}</td>
+            <td title="${escAttr(profitTooltip)}" style="cursor:help;">
+                ${profitInnerHtml}
+            </td>
+            <td style="padding-right: 24px;">
+                <div style="font-size:12px; color:#0ecb81; font-weight:500; text-align: left;"><span style="color:#0ecb81;">↑</span> ${escHtml(exchName(i.exchange_spot))} <span style="font-size:10px; color:#888;">Spot</span></div>
+                <div style="font-size:12px; color:#F6465D; font-weight:500; text-align: left;"><span style="color:#F6465D;">↓</span> ${escHtml(exchName(i.exchange_futures))} <span style="font-size:10px; color:#888;">Futuros</span></div>
+            </td>
+            <td style="padding-left: 24px;">
+                <div style="font-size:12px; color:#0ecb81; font-weight:500; text-align: right;">Comprar <span style="font-weight:600;">${fmtPrice(i.price_spot)}</span></div>
+                <div style="font-size:12px; color:#F6465D; font-weight:500; text-align: right;">Vender <span style="font-weight:600;">${fmtPrice(i.price_futures)}</span></div>
+            </td>
+            <td title="${escAttr(fundingTooltip)}" style="cursor:help;">
+                <div style="display:flex; align-items:center; gap:6px; font-size:12px;">
+                    <span style="color:${fundingColor}; font-weight:600;">${fundingTextDisplay}</span>
+                    <span style="color:#666; font-size:11px;">⏱ ${fundingTimeText}</span>
+                </div>
+            </td>
+            <td title="${escAttr(rangeTooltip)}" style="cursor:help;">
+                <div style="font-size:11px; color:#0ecb81;">Comprar ${rangeSpotText}</div>
+                <div style="font-size:11px; color:#F6465D;">Vender ${rangeFutText}</div>
+            </td>
+            <td title="${escAttr(ordersTooltip)}" style="cursor:help;">
+                <div style="font-size:10px; color:${finalOrdersColor || ordersSpotColor};">${ordersSpotText}</div>
+                <div style="font-size:10px; color:${finalOrdersColor || ordersFutColor};">${ordersFutText}</div>
+            </td>
+            <td>${renderOperationalState(i)}</td>
+            <td>
+                <div style="display:flex; gap:4px; justify-content: center;">
+                    <button class="btn-action" style="padding:2px 6px;" onclick='fav(${JSON.stringify(i.symbol)}, ${JSON.stringify(i.exchange_spot)}, ${JSON.stringify(i.exchange_futures)})' title="Favoritar"><i class="${starClass}"></i></button>
+                    <button class="btn-action" style="padding:2px 6px; color:#f87171;" onclick='toggleBlock(${JSON.stringify(i.symbol)}, ${JSON.stringify(i.exchange_spot)}, ${JSON.stringify(i.exchange_futures)})' title="Bloquear"><i class="fa-solid fa-ban"></i></button>
+                    <button class="${openExchClass}" style="padding:2px 6px; color:#3b82f6;" ${openExchOnClick} title="${openExchTitle}" ${openExchDisabled}><i class="fa-solid fa-external-link-alt"></i></button>
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    // [CORREÇÃO V2.2 / BUG-01] Abrir ambas as exchanges com tratamento de popup blocker
+    window.openExchangeWindows = function(urlBuy, urlSell) {
+        // [BUG-03] Usa função global validateUrl para consistência
+        const validBuy = window.validateUrl(urlBuy);
+        const validSell = window.validateUrl(urlSell);
+
+        // [CORREÇÃO V2.2] Substituir alert() por showToast
+        if (!validBuy && !validSell) {
+            showToast('Exchange não suportada ou URL inválida', 'warning');
+            return;
+        }
+
+        let openedWindows = [];
+        let blockedCount = 0;
+
+        // [CORREÇÃO V2.2] Função para abrir janela com feedback imediato
+        const openWindow = (url, side, label) => {
+            const win = window.open(
+                encodeURI(url),
+                '_blank',
+                `width=${Math.floor(screen.width / 2)},height=${screen.height},left=${side},top=0`
+            );
+            if (win) {
+                openedWindows.push(label);
+            } else {
+                blockedCount++;
+                // [CORREÇÃO V2.2] Feedback imediato para cada janela bloqueada
+                showToast(`Janela ${label} bloqueada pelo navegador`, 'warning');
+            }
+            return win;
+        };
+
+        // [P1-03] Abre ambas as janelas sincronamente no mesmo gesto do usuário
+        // Spot (compra) abre à esquerda, Futuros (venda) abre à direita
+        if (validBuy && validSell) {
+            // Abre ambas sincronamente - Spot à esquerda, Futuros à direita
+            openWindow(validBuy, 0, 'compra (Spot)');
+            openWindow(validSell, Math.floor(screen.width / 2), 'venda (Futuros)');
+        } else if (validBuy) {
+            openWindow(validBuy, 0, 'compra (Spot)');
+        } else if (validSell) {
+            openWindow(validSell, Math.floor(screen.width / 2), 'venda (Futuros)');
+        }
+    };
+
+    // [CORREÇÃO V2.1] Sistema de toast notifications
+    window.showToast = function(message, type = 'info') {
+        // Remove toast anterior se existir
+        const existing = document.getElementById('domarb-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'domarb-toast';
+        const colors = {
+            info: '#3b82f6',
+            warning: '#f59e0b',
+            error: '#ef4444',
+            success: '#10b981'
+        };
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid ${colors[type] || colors.info};
+            border-left: 4px solid ${colors[type] || colors.info};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            max-width: 300px;
+            animation: slideIn 0.3s ease;
+        `;
+        toast.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid ${type === 'warning' ? 'fa-triangle-exclamation' : 'fa-info-circle'}" style="color:${colors[type] || colors.info};"></i>
+                <span>${escHtml(message)}</span>
+            </div>
+        `;
+
+        // Adiciona animação CSS se não existir
+        if (!document.getElementById('toast-animations')) {
+            const style = document.createElement('style');
+            style.id = 'toast-animations';
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(toast);
+
+        // Remove após 5 segundos
+        setTimeout(() => {
+            toast.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    };
+
+    // -------------------------------------------------------------------------
+    // 8. RENDER LOOP
+    // -------------------------------------------------------------------------
+    function getSortVal(item, key) {
+        switch (key) {
+            case 'score': return item.score;
+            case 'symbol': return item.symbol;
+            case 'volume': return item.volume_24h_usd;
+            case 'spot_price': return item.price_spot;
+            case 'futures_price': return item.price_futures;
+            case 'spread': return item.spread_exec_pct;
+            case 'spread_net': return item.spread_net_pct;
+
+            // [FIX V111] Sort respects zero real (use total OR depth fallback OR 0)
+            case 'capacity': return (item.allocation_use_total_usd ?? item.depth_exec_usd ?? 0);
+
+            case 'conf': return item.spread_success_rate || 0;
+            case 'status': return item.execution_decision || item.status;
+            default: return item[key] || 0;
+        }
+    }
+
+    // [CORREÇÃO V2.1] Cache de elementos DOM para evitar reflows
+    const _domCache = {};
+    function getCachedEl(id) {
+        if (!_domCache[id]) _domCache[id] = document.getElementById(id);
+        return _domCache[id];
+    }
+
+    window.render = function () {
+        const tbody = getCachedEl('tableBody');
+        const searchEl = getCachedEl('globalSearch');
+        const term = searchEl ? searchEl.value.toUpperCase() : '';
+
+        // [CORREÇÃO V2.1] Reutiliza dataMap existente quando possível
+        const prevDataMap = dataMap;
+        dataMap = {};
+
+        const blockedSet = new Set(activeFilters.blockedCoins);
+        let counts = { total: data.length, exchange: 0, blacklist: 0, spread: 0, score: 0, persist: 0, vol: 0, same: 0, cross: 0, killed: 0, risk: 0, avoid: 0, search: 0 };
+
+        // [CORREÇÃO V2.1] Usa DocumentFragment para batch update
+        const fragment = document.createDocumentFragment();
+
+        let res = data.filter(i => {
+            if (!i.symbol) return false;
+            const pairKey = getPairKey(i.symbol, i.exchange_spot, i.exchange_futures);
+            if (!pairKey) return false; i._pairKey = pairKey;
+            const uniqueKey = getKey(i); dataMap[uniqueKey] = i;
+
+            if (!checkExchanges(i)) { counts.exchange++; return false; }
+            if (blockedSet.has(pairKey)) { counts.blacklist++; return false; }
+            if (i.spread_net_pct < activeFilters.minSpread) { counts.spread++; return false; }
+            if (i.score < activeFilters.minScore) { counts.score++; return false; }
+            if ((i.persistence_minutes || 0) < activeFilters.minPersist) { counts.persist++; return false; }
+            if (activeFilters.minVol > 0 && i.volume_24h_usd < activeFilters.minVol) { counts.vol++; return false; }
+
+            const spotBase = i.exchange_spot; const futBase = i.exchange_futures.replace(/_futures$/, '');
+            const isSame = (spotBase === futBase); const isCross = !isSame;
+            if (!activeFilters.allowSame && isSame) { counts.same++; return false; }
+            if (!activeFilters.allowCross && isCross) { counts.cross++; return false; }
+
+            const { isKilled, isAvoid, isBlocked } = getInoperableFlags(i);
+            if (isKilled) counts.killed++; if (isBlocked) counts.risk++; if (isAvoid) counts.avoid++;
+            if (activeFilters.hideBlocked && (isBlocked || isKilled || isAvoid)) return false;
+
+            const baseSym = baseAssetFromSymbol(i.symbol).toUpperCase();
+            const match = i.symbol.toUpperCase().includes(term) || baseSym.includes(term);
+            if (!match) { counts.search++; return false; }
+            return true;
+        });
+
+        // [PERF V2.1] Log condicional
+        if (window.DEBUG_TAGS) console.log("FILTER_COUNTS", counts, "res=", res.length, "total=", data.length);
+
+        res.sort((a, b) => {
+            const valA = getSortVal(a, sortConfig.key); const valB = getSortVal(b, sortConfig.key);
+            if (typeof valA === 'string') return sortConfig.dir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            return sortConfig.dir === 'asc' ? (valA - valB) : (valB - valA);
+        });
+
+        // [CORREÇÃO V2.1] Renderização otimizada com reutilização de DOM quando possível
+        let html = "";
+        const favItems = res.filter(i => favs.includes(i._pairKey));
+        const regularItems = res.filter(i => !favs.includes(i._pairKey));
+
+        if (favItems.length > 0) {
+            favItems.forEach(i => { html += getRowHTML(i); });
+            if (regularItems.length > 0) html += `<tr><td colspan="12" class="fav-separator"><i class="fa-solid fa-star"></i> Favoritos acima</td></tr>`;
+        }
+        regularItems.forEach(i => { html += getRowHTML(i); });
+
+        const searchTxt = term ? `Busca: "${term}" (${counts.search} ocultos)` : `Busca: —`;
+        const inopLabel = activeFilters.hideBlocked ? 'Ocultados' : 'Detectados';
+        let msg = (ws && ws.readyState === 1) ? `<div style="line-height:1.6; opacity:0.8; text-align:center;"><div style="font-size:16px; font-weight:bold; margin-bottom:10px;">Snapshot Atual: ${counts.total} itens no frame</div><div style="font-size:11px; color:#aaa; margin-bottom:12px;">Config: Spread > ${activeFilters.minSpread}% | Vol > $${fmtVol(activeFilters.minVol)} | Score > ${activeFilters.minScore} | ${searchTxt} | ${activeFilters.hideBlocked ? 'Ocultando Inválidos' : 'Mostrando Tudo'}</div><div style="font-size:12px; color:#888;"><b>Filtros de Mercado:</b><br>Spread: ${counts.spread} | Score: ${counts.score} | Vol: ${counts.vol} | Persist: ${counts.persist}<br><br><b>Configuração & Tipos:</b><br>Exchanges: ${counts.exchange} | Same: ${counts.same} | Cross: ${counts.cross} | Blacklist: ${counts.blacklist}<br><br><b>Inoperáveis (${inopLabel}):</b><br><span style="color:#f87171">Killed: ${counts.killed} | Risco: ${counts.risk} | Avoid: ${counts.avoid}</span></div></div>` : 'Conectando ao feed...';
+
+        if (tbody) {
+            // [CORREÇÃO V2.1] Usa requestAnimationFrame para evitar bloqueio da UI
+            requestAnimationFrame(() => {
+                tbody.innerHTML = html || `<tr><td colspan="12" style="text-align:center; padding:40px;">${msg}</td></tr>`;
+            });
+        }
+
+        const countEl = getCachedEl('opp-count');
+        if (countEl) countEl.innerText = res.length;
+
+        const configPanel = getCachedEl('configPanel');
+        if (configPanel && configPanel.style.display === 'block') renderExecutionStats();
+    };
+
+    window.connectWS = function () {
+        if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const params = encodeURIComponent([...activeFilters.spots, ...activeFilters.futs].join(','));
+        ws = new WebSocket(`${protocol}//${window.location.host}/ws/opportunities?exchanges=${params}`);
+        ws.onmessage = (event) => {
+            if (paused) return;
+            try {
+                const raw = JSON.parse(event.data);
+                const items = Array.isArray(raw) ? raw : (raw.items || []);
+                if (Array.isArray(items)) {
+                    data = items.map(flattenOpportunity);
+                    const timeEl = document.getElementById('last-update');
+                    if (timeEl) timeEl.innerText = new Date().toLocaleTimeString();
+                    if (window.render) window.render();
+                }
+            } catch (e) { console.error("WS Parse:", e); }
+        };
+        ws.onerror = (e) => { try { ws.close(); } catch (err) { } };
+        ws.onclose = () => { ws = null; wsReconnectTimer = setTimeout(window.connectWS, 5000); };
+    };
+
+    window.updateSortUI = function () { document.querySelectorAll('th.sortable').forEach(th => { th.classList.remove('active-sort'); if (th.getAttribute('data-key') === sortConfig.key) { th.classList.add('active-sort'); const arrow = th.querySelector('.sort-arrow'); if (arrow) arrow.textContent = sortConfig.dir === 'asc' ? '▲' : '▼'; } }); const elKey = document.getElementById('sortIndicatorKey'); const elDir = document.getElementById('sortIndicatorDir'); if (elKey) elKey.textContent = sortConfig.key; if (elDir) elDir.textContent = sortConfig.dir === 'asc' ? 'crescente' : 'decrescente'; };
+
+    // [V111] Sync UI includes Hedge Input with ??
+    window.syncUI = function () {
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+        setVal('confMinSpread', activeFilters.minSpread); setVal('confMinScore', activeFilters.minScore); setVal('confMinVol', activeFilters.minVol); setVal('confMinPersist', activeFilters.minPersist);
+        setVal('confBankroll', activeFilters.bankrollUsd);
+
+        // [FIX V111] Edge-case proofing with ??
+        // [CORREÇÃO V2.2 / BUG-04] Sincroniza input de Hedge (única chamada)
+        setVal('confHedgePct', ((activeFilters.hedgeFactor ?? 0.5) * 100));
+        if (document.getElementById('confCapAgg')) setVal('confCapAgg', ((activeFilters.capPctAggressive ?? 1.0) * 100));
+        if (document.getElementById('confCapMod')) setVal('confCapMod', ((activeFilters.capPctModerate ?? 0.5) * 100));
+        if (document.getElementById('confCapCons')) setVal('confCapCons', ((activeFilters.capPctConservative ?? 0.25) * 100));
+
+        const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+        setChk('chkBlocked', activeFilters.hideBlocked); setChk('chkCross', activeFilters.allowCross); setChk('chkSame', activeFilters.allowSame);
+        document.querySelectorAll('.exch-check').forEach(el => { const val = el.getAttribute('data-val'); const clean = canonBaseExchange(val); if (activeFilters.spots.includes(clean) || activeFilters.futs.includes(clean + '_futures')) { el.classList.add('checked'); } else { el.classList.remove('checked'); } });
+        window.renderBlockedList(); window.updateFilterSummary();
+    };
+
+    window.loadFilters = function () { initStorage(); };
+    document.addEventListener('DOMContentLoaded', () => { try { window.loadFilters(); window.updateSortUI(); window.syncUI(); if (window.connectWS) window.connectWS(); } catch (e) { console.error("Init Error:", e); } });
+</script>
+{% endblock %}

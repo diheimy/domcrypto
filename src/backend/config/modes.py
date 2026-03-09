@@ -1,0 +1,1 @@
+MODES = ["conservative", "balanced", "aggressive"]
