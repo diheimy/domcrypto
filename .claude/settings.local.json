@@ -27,7 +27,9 @@
       "Bash(docker-compose logs:*)",
       "Bash(curl:*)",
       "Bash(python3:*)",
-      "Bash(gh repo:*)"
+      "Bash(gh repo:*)",
+      "Read(//tmp/dom-crypto-hub/**)",
+      "Read(//c/Users/DIHEIM~1/AppData/Local/Temp/dom-crypto-hub/**)"
     ]
   }
 }

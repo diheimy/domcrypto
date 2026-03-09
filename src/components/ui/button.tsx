@@ -14,14 +14,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium font-body transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer'
+    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer'
 
     const variants = {
-      primary: 'bg-primary text-black hover:bg-primary-light focus:ring-primary shadow-lg shadow-primary/20',
-      secondary: 'bg-transparent border border-primary text-primary hover:bg-primary/10 focus:ring-primary',
-      ghost: 'bg-transparent hover:bg-hover text-muted hover:text-white focus:ring-muted',
-      danger: 'bg-red/20 text-red hover:bg-red/30 focus:ring-red',
-      outline: 'bg-transparent border border-border text-white hover:border-primary focus:ring-primary'
+      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow',
+      secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border',
+      ghost: 'bg-transparent hover:bg-accent hover:text-accent-foreground',
+      danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
+      outline: 'bg-transparent border border-border text-foreground hover:bg-accent hover:text-accent-foreground'
     }
 
     const sizes = {

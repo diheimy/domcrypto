@@ -3,225 +3,175 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   FONT IMPORTS - UI/UX Pro Max Design System
-   Orbitron (Display) + Exo 2 (Body) + JetBrains Mono (Data)
+   FONT IMPORTS - Inter + JetBrains Mono
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
 
 /* ==========================================================================
-   CSS CUSTOM PROPERTIES - Design System Variables
+   CSS CUSTOM PROPERTIES - Design System (HSL Variables)
    ========================================================================== */
 :root {
-  /* Core Colors - Dark Mode OLED */
-  --background: #0F172A;        /* slate-900 */
-  --surface: #1E293B;           /* slate-800 */
-  --card: #0f1319;
-  --hover: #334155;             /* slate-700 */
+  /* Core Colors - Dark Mode Modern */
+  --background: 220 20% 6%;
+  --foreground: 210 20% 95%;
 
-  /* Border Colors */
-  --border: rgba(148, 163, 184, 0.1);      /* slate-400/10 */
-  --border-gold: rgba(245, 158, 11, 0.3);  /* primary/30 */
+  --card: 220 18% 10%;
+  --card-foreground: 210 20% 95%;
 
-  /* Brand Colors - Gold/Amber Trust */
-  --gold: #F59E0B;              /* amber-500 */
-  --gold-dim: #FBBF24;          /* amber-400 */
-  --gold-glow: rgba(245, 158, 11, 0.4);
+  --popover: 220 18% 10%;
+  --popover-foreground: 210 20% 95%;
+
+  /* Primary - Gold/Amber */
+  --primary: 43 96% 56%;
+  --primary-foreground: 220 20% 6%;
+  --primary-glow: hsl(43 96% 56% / 0.15);
+
+  /* Secondary */
+  --secondary: 220 16% 14%;
+  --secondary-foreground: 210 20% 85%;
+
+  /* Muted */
+  --muted: 220 14% 18%;
+  --muted-foreground: 215 15% 55%;
+
+  /* Accent */
+  --accent: 43 80% 45%;
+  --accent-foreground: 220 20% 6%;
+
+  /* Destructive */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Border & Input */
+  --border: 220 14% 16%;
+  --input: 220 14% 18%;
+  --ring: 43 96% 56%;
+
+  /* Radius */
+  --radius: 0.75rem;
 
   /* Status Colors */
-  --green: #10B981;             /* emerald-500 */
-  --green-glow: rgba(16, 185, 129, 0.4);
-  --red: #EF4444;               /* red-500 */
-  --red-glow: rgba(239, 68, 68, 0.4);
-  --blue: #3B82F6;              /* blue-500 */
-  --blue-glow: rgba(59, 130, 246, 0.4);
-  --yellow: #F59E0B;
+  --gold: 43 96% 56%;
+  --gold-dim: 43 60% 40%;
+  --green: 142 76% 46%;
+  --green-dim: 142 40% 30%;
+  --green-glow: hsl(142 76% 46% / 0.15);
+  --red: 0 72% 51%;
+  --red-dim: 0 40% 30%;
+  --red-glow: hsl(0 72% 51% / 0.15);
+  --blue: 217 91% 60%;
+  --blue-dim: 217 50% 35%;
+  --blue-glow: hsl(217 91% 60% / 0.15);
+  --yellow: 45 93% 47%;
 
-  /* Text Colors */
-  --text-primary: #F8FAFC;      /* slate-50 */
-  --text-secondary: #94A3B8;    /* slate-400 */
-  --text-muted: #64748B;        /* slate-500 */
-  --muted: #64748B;
+  /* Surface Tokens */
+  --surface: 220 16% 12%;
+  --surface-hover: 220 16% 15%;
+  --glass: 220 20% 8%;
 
-  /* Glassmorphism */
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-blur: blur(16px);
-
-  /* Shadows */
-  --shadow-glow: 0 0 20px var(--gold-glow);
-  --shadow-green: 0 0 20px var(--green-glow);
-  --shadow-red: 0 0 20px var(--red-glow);
-  --shadow-blue: 0 0 20px var(--blue-glow);
-
-  /* Transitions */
-  --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Layout */
-  --sidebar-width: 256px;
-  --header-height: 56px;
-
-  /* Z-Index Scale */
-  --z-sidebar: 40;
-  --z-overlay: 50;
-  --z-modal: 100;
-  --z-toast: 1000;
+  /* Sidebar */
+  --sidebar-background: 220 20% 5%;
+  --sidebar-foreground: 210 20% 75%;
+  --sidebar-primary: 43 96% 56%;
+  --sidebar-primary-foreground: 220 20% 6%;
+  --sidebar-accent: 220 16% 12%;
+  --sidebar-accent-foreground: 210 20% 95%;
+  --sidebar-border: 220 14% 12%;
+  --sidebar-ring: 43 96% 56%;
 }
 
 /* ==========================================================================
    BASE STYLES
    ========================================================================== */
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-html,
-body {
-  max-width: 100vw;
-  max-height: 100vh;
-  overflow-x: hidden;
-  font-family: 'Exo 2', system-ui, -apple-system, sans-serif;
-  background: var(--background);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
 
-/* ==========================================================================
-   TYPOGRAPHY
-   ========================================================================== */
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
-}
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-.font-display {
-  font-family: 'Orbitron', sans-serif;
-}
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
 
-.font-body {
-  font-family: 'Exo 2', sans-serif;
-}
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
 
-.font-data {
-  font-family: 'Roboto Mono', monospace;
-}
-
-/* ==========================================================================
-   SCROLLBAR
-   ========================================================================== */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--surface);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
 }
 
 /* ==========================================================================
    UTILITY CLASSES
    ========================================================================== */
+@layer utilities {
+  /* Glass effect */
+  .glass {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--glass) / 0.8),
+      hsl(var(--glass) / 0.4)
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
 
-/* Text Gradient Gold */
-.text-gradient-gold {
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+  /* Shadow Glow */
+  .shadow-glow {
+    box-shadow: 0 0 20px -5px hsl(var(--gold) / 0.15);
+  }
 
-/* Border Glow Gold */
-.border-glow-gold {
-  box-shadow: 0 0 20px var(--gold-glow);
-}
+  .shadow-glow-green {
+    box-shadow: 0 0 20px -5px hsl(var(--green) / 0.15);
+  }
 
-/* Glassmorphism - Updated for new design system */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
+  .shadow-glow-red {
+    box-shadow: 0 0 20px -5px hsl(var(--red) / 0.15);
+  }
+
+  /* Font Mono */
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* Text Gradient Gold */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-dim)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Surface Gradient */
+  .bg-gradient-surface {
+    background: linear-gradient(180deg, hsl(var(--surface)), hsl(var(--background)));
+  }
+
+  /* Animation */
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
 }
 
 /* ==========================================================================
-   ANIMATIONS - UI/UX Pro Max
-   ========================================================================== */
-
-/* Live Indicator Pulse - Real-Time Monitoring */
-@keyframes pulse-live {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-    box-shadow: 0 0 8px var(--green-glow);
-  }
-}
-
-.animate-pulse-live {
-  animation: pulse-live 2s infinite;
-}
-
-/* Gold Pulse - Legacy support */
-@keyframes pulse-gold {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.25);
-  }
-}
-
-.animate-pulse-gold {
-  animation: pulse-gold 2s ease-in-out infinite;
-}
-
-/* Loading Spinner */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Shimmer Effect */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.animate-shimmer {
-  animation: shimmer 2s linear infinite;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(245, 158, 11, 0.1) 50%,
-    transparent 100%
-  );
-  background-size: 1000px 100%;
-}
-
-/* ==========================================================================
-   ACCESSIBILITY - Reduced Motion (CRITICAL)
+   ACCESSIBILITY - Reduced Motion
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -231,25 +181,19 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
-  .animate-pulse-live,
-  .animate-pulse-gold,
-  .animate-shimmer {
-    animation: none;
-  }
 }
 
 /* ==========================================================================
-   FOCUS STATES - Accessibility (CRITICAL)
+   FOCUS STATES
    ========================================================================== */
 *:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }

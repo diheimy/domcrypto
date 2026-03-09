@@ -26,7 +26,7 @@ export function KpiCard({
   const trendColors = {
     up: 'text-green',
     down: 'text-red',
-    neutral: 'text-muted'
+    neutral: 'text-muted-foreground'
   }
 
   const trendIcons = {
@@ -38,19 +38,19 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'glass rounded-xl p-6 border border-border transition-all hover:border-primary/30 hover:shadow-glow',
+        'glass rounded-md p-5 border border-border transition-all duration-300 hover:border-primary/30 hover:shadow-glow',
         className
       )}
     >
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-muted text-sm font-body">{title}</span>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-muted-foreground text-sm font-sans">{title}</span>
         <div className="text-primary">{icon}</div>
       </div>
-      <div className="text-3xl font-bold font-data text-white">
+      <div className="text-2xl font-bold font-mono text-foreground mb-1">
         {value}
       </div>
       {change && (
-        <div className={cn('text-sm mt-2 flex items-center gap-1 font-body', trendColors[trend])}>
+        <div className={cn('text-xs flex items-center gap-1 font-sans', trendColors[trend])}>
           <span>{trendIcons[trend]}</span>
           <span>{change}</span>
         </div>
